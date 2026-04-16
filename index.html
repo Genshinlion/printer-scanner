@@ -48,14 +48,6 @@
   .topbar-icon { font-size: 22px; }
   .topbar-title { font-size: 17px; font-weight: 600; color: var(--text); }
   .topbar-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
-  .topbar-right { margin-left: auto; }
-  .key-status {
-    font-size: 11px; font-weight: 600;
-    padding: 4px 10px; border-radius: 20px; border: none; cursor: pointer;
-  }
-  .key-saved   { background: #e6f9ee; color: #1a7a40; }
-  .key-missing { background: var(--red-bg); color: var(--red-text); }
-
   .progress-wrap { padding: 14px 20px 6px; }
   .progress-steps { display: flex; gap: 5px; margin-bottom: 6px; }
   .ps { flex: 1; height: 4px; border-radius: 2px; background: #ddd; transition: background 0.3s; }
@@ -233,8 +225,6 @@ inputCameraBack.onchange   = e => handlePhoto(e, 'back');
 inputGalleryBack.onchange  = e => handlePhoto(e, 'back');
 
 // ── API Key stored in localStorage ────────────────────────────────────────
-const LS_KEY = 'printer_scanner_api_key';
-
 let state = {
   step: 'welcome',
   apiKey: '',
@@ -245,7 +235,6 @@ let state = {
 };
 
 // Load saved key on startup
-try { state.apiKey = localStorage.getItem(LS_KEY) || ''; } catch(e) {}
 
 function saveApiKey(key) {
   state.apiKey = key;
@@ -329,8 +318,7 @@ async function analyze() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           frontB64: state.front.b64,
-          backB64:  state.back.b64,
-          apiKey:   state.apiKey
+          backB64:  state.back.b64
         })
       });
     } catch (networkErr) {
@@ -376,7 +364,7 @@ async function testApiKey() {
     const resp = await fetch('/.netlify/functions/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ frontB64: 'test', backB64: 'test', apiKey: state.apiKey })
+      body: JSON.stringify({ frontB64: 'test', backB64: 'test' })
     });
     const data = await resp.json();
     if (resp.ok || resp.status === 400) {
@@ -393,7 +381,14 @@ async function testApiKey() {
 }
 
 // ── WhatsApp share ────────────────────────────────────────────────────────
-function sendEmail() {
+function b64ToBlob(b64) {
+  const bytes = atob(b64);
+  const arr = new Uint8Array(bytes.length);
+  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+  return new Blob([arr], { type: 'image/jpeg' });
+}
+
+async function sendEmail() {
   const d = state.details;
   const subject = 'Printer Scan Report — ' + d.brand + ' ' + d.model;
   const body = [
@@ -407,11 +402,6 @@ function sendEmail() {
     'Manufacturer: ' + d.manufacturer,
     'Serial No:    ' + (d.serial_number || 'Not visible on label'),
     '',
-    'SPECS',
-    'Type:         ' + d.printer_type,
-    'Colour:       ' + d.color_support,
-    'Connectivity: ' + d.connectivity,
-    '',
     'INK / TONER TO ORDER',
     '====================',
     'Ink Type:     ' + d.ink_type,
@@ -423,6 +413,23 @@ function sendEmail() {
     '',
     '— Sent from Printer Scanner App'
   ].join('\n');
+
+  // Try Web Share API with image attachments (works on Android/iOS)
+  if (navigator.share && navigator.canShare) {
+    try {
+      const files = [];
+      if (state.front && state.front.b64) files.push(new File([b64ToBlob(state.front.b64)], 'printer-front.jpg', { type: 'image/jpeg' }));
+      if (state.back  && state.back.b64)  files.push(new File([b64ToBlob(state.back.b64)],  'printer-top.jpg',   { type: 'image/jpeg' }));
+      if (files.length && navigator.canShare({ files })) {
+        await navigator.share({ title: subject, text: body, files });
+        return;
+      }
+    } catch(e) {
+      if (e.name !== 'AbortError') console.warn('Share failed:', e);
+    }
+  }
+
+  // Fallback — open email app without attachments
   window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 }
 
@@ -435,15 +442,11 @@ function topbar(subtitle) {
       <div class="topbar-title">Printer Scanner</div>
       ${subtitle ? '<div class="topbar-sub">' + subtitle + '</div>' : ''}
     </div>
-    <div class="topbar-right">
-      <button class="key-status ${hasKey() ? 'key-saved' : 'key-missing'}" id="keyBtn">
-        ${hasKey() ? '🔑 Key saved' : '⚠️ No key'}
-      </button>
-    </div>
+
   </div>`;
 }
 
-const STEPS = ['setup','front','back','analyzing','results'];
+const STEPS = ['front','back','analyzing','results'];
 function progressBar(current) {
   const idx = STEPS.indexOf(current);
   return '<div class="progress-wrap"><div class="progress-steps">' +
@@ -499,45 +502,6 @@ function render() {
       '</div>';
 
     document.getElementById('startBtn').onclick = () => { state.step = hasKey() ? 'front' : 'setup'; render(); };
-    document.getElementById('keyBtn').onclick   = () => { state.step = 'setup'; render(); };
-    return;
-  }
-
-  if (state.step === 'setup') {
-    app.innerHTML =
-      topbar('API Key Setup') +
-      progressBar('setup') +
-      '<div class="content">' +
-      '<button class="btn-back" id="backBtn">← Back</button>' +
-      '<div class="card"><div class="card-label">🔑 Gemini API Key</div>' +
-        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">Completely free — no credit card needed. Enter once, saved permanently to this tablet.</p>' +
-        '<label class="field-label">Paste your Groq API key</label>' +
-        '<input type="password" id="keyInput" placeholder="gsk_..." value="' + (state.apiKey || '') + '" />' +
-        '<p style="font-size:12px;color:#999;margin-top:8px;">Get a free key at <strong>console.groq.com</strong> → API Keys</p>' +
-        '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">' +
-          '<button id="testBtn" style="background:var(--amber-light);border:1px solid var(--amber-border);color:var(--amber-dark);padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;width:100%">Test Connection</button>' +
-          '<div id="testResult" style="font-size:13px;margin-top:8px;min-height:20px;text-align:center;"></div>' +
-        '</div>' +
-      '</div>' +
-      (hasKey()
-        ? '<div class="tip-box">✅ A key is already saved on this tablet. You can replace it above or just continue.<br><br><button id="clearBtn" style="background:none;border:none;color:var(--red-text);font-size:13px;cursor:pointer;text-decoration:underline;padding:0;">Clear saved key</button></div>'
-        : ''
-      ) +
-      '<button class="btn btn-primary" id="saveBtn" ' + (hasKey()?'':'disabled') + '>Save Key &amp; Continue →</button>' +
-      '</div>';
-
-    const ki = document.getElementById('keyInput');
-    const sb = document.getElementById('saveBtn');
-    ki.addEventListener('input', () => { sb.disabled = !ki.value.startsWith('sk-'); });
-    ki.addEventListener('input', () => { sb.disabled = !ki.value.startsWith('AIza'); });
-    sb.onclick = () => { saveApiKey(ki.value.trim()); state.step = 'front'; render(); };
-    document.getElementById('backBtn').onclick = () => { state.step = 'welcome'; render(); };
-    const cb = document.getElementById('clearBtn');
-    if (cb) cb.onclick = () => { clearApiKey(); render(); };
-    document.getElementById('keyBtn').onclick = () => {};
-    const tb = document.getElementById('testBtn');
-    if (tb) tb.onclick = () => { state.apiKey = ki.value.trim(); testApiKey(); };
-    if (ki.value.startsWith('AIza')) sb.disabled = false;
     return;
   }
 
@@ -580,7 +544,6 @@ function render() {
 
     document.getElementById('backBtn').onclick    = () => { state.step = 'front'; render(); };
     document.getElementById('analyseBtn').onclick = () => analyze();
-    document.getElementById('keyBtn').onclick     = () => { state.step = 'setup'; render(); };
     const rf = document.getElementById('retakeFront');
     if (rf) rf.onclick = () => { state.step = 'front'; render(); };
     return;
@@ -635,7 +598,6 @@ function render() {
 
     document.getElementById('emailBtn').onclick  = () => sendEmail();
     document.getElementById('rescanBtn').onclick = () => resetScan();
-    document.getElementById('keyBtn').onclick    = () => { state.step = 'setup'; render(); };
     return;
   }
 }
