@@ -87,7 +87,7 @@
   .btn-primary   { background: var(--amber); color: #412402; }
   .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
   .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
-  .btn-whatsapp  { background: var(--green); color: #fff; font-size: 17px; padding: 18px; }
+  .btn-email     { background: #1a73e8; color: #fff; font-size: 17px; padding: 18px; }
   .btn-back {
     background: none; border: none; color: var(--amber-dark);
     font-size: 14px; cursor: pointer; padding: 8px 0;
@@ -393,33 +393,37 @@ async function testApiKey() {
 }
 
 // ── WhatsApp share ────────────────────────────────────────────────────────
-function sendWhatsApp() {
+function sendEmail() {
   const d = state.details;
-  const lines = [
-    '🖨️ *PRINTER SCAN REPORT*',
-    '━━━━━━━━━━━━━━━━━━━━',
-    '📋 *DETAILS*',
-    '*Brand:* ' + d.brand,
-    '*Model:* ' + d.model,
-    '*Model No:* ' + (d.model_number || '—'),
-    '*Manufacturer:* ' + d.manufacturer,
-    '*Serial No:* ' + (d.serial_number || 'Not visible on label'),
+  const subject = 'Printer Scan Report — ' + d.brand + ' ' + d.model;
+  const body = [
+    'PRINTER SCAN REPORT',
+    '====================',
     '',
-    '🔌 *SPECS*',
-    '*Type:* ' + d.printer_type,
-    '*Colour:* ' + d.color_support,
-    '*Connectivity:* ' + d.connectivity,
-    '━━━━━━━━━━━━━━━━━━━━',
-    '🖨️ *INK / TONER TO ORDER*',
-    '*Type:* ' + d.ink_type,
-    '*Cartridge No:* ' + d.ink_cartridge_numbers,
-    '━━━━━━━━━━━━━━━━━━━━',
-    '📝 *NOTES*',
-    '*Condition:* ' + d.condition_notes,
-    '*Other:* ' + d.additional_notes
-  ];
-  const msg = lines.join('\n');
-  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    'PRINTER DETAILS',
+    'Brand:        ' + d.brand,
+    'Model:        ' + d.model,
+    'Model No:     ' + (d.model_number || '—'),
+    'Manufacturer: ' + d.manufacturer,
+    'Serial No:    ' + (d.serial_number || 'Not visible on label'),
+    '',
+    'SPECS',
+    'Type:         ' + d.printer_type,
+    'Colour:       ' + d.color_support,
+    'Connectivity: ' + d.connectivity,
+    '',
+    'INK / TONER TO ORDER',
+    '====================',
+    'Ink Type:     ' + d.ink_type,
+    'Cartridge No: ' + d.ink_cartridge_numbers,
+    '',
+    'NOTES',
+    'Condition:    ' + d.condition_notes,
+    'Other:        ' + d.additional_notes,
+    '',
+    '— Sent from Printer Scanner App'
+  ].join('\n');
+  window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 }
 
 // ── UI helpers ────────────────────────────────────────────────────────────
@@ -487,7 +491,7 @@ function render() {
       '<div class="card"><div class="card-label">How it works</div><div class="steps-list">' +
         '<div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>Enter API key</strong> — saved to this tablet, never asked again</div></div>' +
         '<div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>Photo the front</strong> — brand name &amp; control panel</div></div>' +
-        '<div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>Photo the back</strong> — serial number &amp; model label</div></div>' +
+        '<div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>Photo the top</strong> — serial number &amp; model sticker</div></div>' +
         '<div class="step-item"><div class="step-num">4</div><div class="step-text"><strong>AI reads everything</strong> — brand, ink code, serial &amp; more</div></div>' +
         '<div class="step-item"><div class="step-num">5</div><div class="step-text"><strong>Send via WhatsApp</strong> — full report, formatted and ready</div></div>' +
       '</div></div>' +
@@ -544,7 +548,7 @@ function render() {
       '<div class="content">' +
       '<button class="btn-back" id="backBtn">← Back</button>' +
       '<div class="card"><div class="card-label">📸 Front of printer</div>' +
-        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">Make sure the <strong>brand name</strong>, <strong>model label</strong> and <strong>control panel</strong> are in frame.</p>' +
+        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">Make sure the <strong>brand name</strong>, <strong>model label</strong> and <strong>control panel</strong> are clearly in frame. This is the <strong>front</strong> of the printer.</p>' +
         photoUI('front', state.front) +
       '</div>' +
       '<button class="btn btn-primary" id="nextBtn" ' + (state.front?'':'disabled') + '>Next — Back Photo →</button>' +
@@ -558,7 +562,7 @@ function render() {
 
   if (state.step === 'back') {
     app.innerHTML =
-      topbar('Step 3 — Back photo') +
+      topbar('Step 3 — Top photo') +
       progressBar('back') +
       '<div class="content">' +
       '<button class="btn-back" id="backBtn">← Back</button>' +
@@ -567,7 +571,7 @@ function render() {
         : ''
       ) +
       '<div class="card"><div class="card-label">📸 Back of printer</div>' +
-        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">The back label shows the <strong>serial number</strong>, <strong>model number</strong> and ports. Keep it in focus.</p>' +
+        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">Take a photo of the <strong>top</strong> of the printer — this usually shows the model sticker, serial number and any status labels.</p>' +
         photoUI('back', state.back) +
       '</div>' +
       (state.error ? '<div class="error-box">⚠️ <strong>Error:</strong> ' + state.error + '<br><br><small>Check your API key is correct and you have internet access.</small></div>' : '') +
@@ -602,7 +606,7 @@ function render() {
       '<div class="content">' +
       '<div class="thumb-row">' +
         (state.front ? '<div class="thumb-box"><img src="' + state.front.url + '" alt="front"><div class="thumb-label">FRONT</div></div>' : '') +
-        (state.back  ? '<div class="thumb-box"><img src="' + state.back.url  + '" alt="back" ><div class="thumb-label">BACK</div></div>'  : '') +
+        (state.back  ? '<div class="thumb-box"><img src="' + state.back.url  + '" alt="top" ><div class="thumb-label">BACK</div></div>'  : '') +
       '</div>' +
       '<div class="card"><div class="card-label">🖨️ Printer details</div><div class="detail-grid">' +
         '<div class="detail-cell"><div class="dc-label">Brand</div><div class="dc-value">' + d.brand + '</div></div>' +
@@ -625,11 +629,11 @@ function render() {
           '</div>'
         : ''
       ) +
-      '<button class="btn btn-whatsapp" id="waBtn">📲 Send via WhatsApp</button>' +
+      '<button class="btn btn-email" id="emailBtn">📧 Send as Email</button>' +
       '<button class="btn btn-secondary" id="rescanBtn">Scan another printer</button>' +
       '</div>';
 
-    document.getElementById('waBtn').onclick     = () => sendWhatsApp();
+    document.getElementById('emailBtn').onclick  = () => sendEmail();
     document.getElementById('rescanBtn').onclick = () => resetScan();
     document.getElementById('keyBtn').onclick    = () => { state.step = 'setup'; render(); };
     return;
