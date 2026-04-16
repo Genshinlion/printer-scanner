@@ -4,25 +4,25 @@ exports.handler = async (event) => {
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json'
   };
-
+ 
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers, body: '' };
   }
-
+ 
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
-
+ 
   try {
     const { frontB64, backB64, apiKey } = JSON.parse(event.body);
-
+ 
     if (!frontB64 || !backB64) {
       return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing images' }) };
     }
     if (!apiKey) {
       return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing API key' }) };
     }
-
+ 
     const prompt = `You are an expert at identifying office printers. Carefully examine BOTH images (front and back of the same printer) and extract every detail visible on the printer and its labels. Return ONLY a raw JSON object — no markdown, no code fences, no explanation whatsoever:
 {
   "brand": "e.g. HP, Canon, Brother, Epson, Xerox",
@@ -38,9 +38,9 @@ exports.handler = async (event) => {
   "condition_notes": "visible damage, error lights, paper jams, low ink warnings — or say: No issues visible",
   "additional_notes": "any other details useful for ordering ink, toner or spare parts"
 }`;
-
+ 
     const geminiResp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -56,19 +56,19 @@ exports.handler = async (event) => {
         })
       }
     );
-
+ 
     const geminiData = await geminiResp.json();
-
+ 
     if (!geminiResp.ok) {
       const msg = (geminiData.error && geminiData.error.message) || geminiResp.statusText;
       return { statusCode: geminiResp.status, headers, body: JSON.stringify({ error: msg }) };
     }
-
+ 
     const raw   = geminiData.candidates[0].content.parts[0].text;
     const clean = raw.replace(/```json|```/g, '').trim();
-
+ 
     return { statusCode: 200, headers, body: clean };
-
+ 
   } catch (err) {
     return { statusCode: 500, headers, body: JSON.stringify({ error: err.message }) };
   }
