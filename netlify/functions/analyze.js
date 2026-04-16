@@ -58,7 +58,12 @@ exports.handler = async (event) => {
         }
 
         const raw   = data.candidates[0].content.parts[0].text;
-        const clean = raw.replace(/```json|```/g, '').trim();
+        // Extract JSON object even if Gemini adds extra text around it
+        const match = raw.match(/\{[\s\S]*\}/);
+        if (!match) return { statusCode: 500, headers, body: JSON.stringify({ error: 'AI did not return valid JSON. Raw: ' + raw.slice(0, 200) }) };
+        const clean = match[0];
+        // Validate it parses correctly before returning
+        try { JSON.parse(clean); } catch(e) { return { statusCode: 500, headers, body: JSON.stringify({ error: 'JSON parse failed: ' + e.message + ' Raw: ' + raw.slice(0, 200) }) }; }
         return { statusCode: 200, headers, body: clean };
 
       } catch (modelErr) {
