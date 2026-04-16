@@ -255,7 +255,7 @@ function clearApiKey() {
   state.apiKey = '';
   try { localStorage.removeItem(LS_KEY); } catch(e) {}
 }
-function hasKey() { return state.apiKey && state.apiKey.length > 20; }
+function hasKey() { return state.apiKey && state.apiKey.startsWith('gsk_'); }
 
 // ── Photo handling ─────────────────────────────────────────────────────────
 function toB64(file) {
@@ -510,10 +510,10 @@ function render() {
       '<div class="content">' +
       '<button class="btn-back" id="backBtn">← Back</button>' +
       '<div class="card"><div class="card-label">🔑 Gemini API Key</div>' +
-        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">Free key from Google. Enter once — saved permanently to this tablet.</p>' +
-        '<label class="field-label">Paste your Gemini API key</label>' +
-        '<input type="password" id="keyInput" placeholder="AIza..." value="' + (state.apiKey || '') + '" />' +
-        '<p style="font-size:12px;color:#999;margin-top:8px;">Get one free at <strong>aistudio.google.com</strong> → Get API Key</p>' +
+        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">Completely free — no credit card needed. Enter once, saved permanently to this tablet.</p>' +
+        '<label class="field-label">Paste your Groq API key</label>' +
+        '<input type="password" id="keyInput" placeholder="gsk_..." value="' + (state.apiKey || '') + '" />' +
+        '<p style="font-size:12px;color:#999;margin-top:8px;">Get a free key at <strong>console.groq.com</strong> → API Keys</p>' +
         '<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">' +
           '<button id="testBtn" style="background:var(--amber-light);border:1px solid var(--amber-border);color:var(--amber-dark);padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;width:100%">Test Connection</button>' +
           '<div id="testResult" style="font-size:13px;margin-top:8px;min-height:20px;text-align:center;"></div>' +
