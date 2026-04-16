@@ -13,8 +13,8 @@ exports.handler = async (event) => {
     if (!frontB64 || !backB64) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing images' }) };
     if (!apiKey) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing API key' }) };
 
-    const prompt = `You are an expert at identifying office printers. Carefully examine BOTH images (front and back of the same printer) and extract every detail visible. Return ONLY a raw JSON object — no markdown, no code fences, no explanation:
-{"brand":"e.g. HP, Canon, Brother, Epson","model":"full model name","model_number":"product number from label","manufacturer":"company name","serial_number":"from label or null","ink_type":"Ink or Toner","ink_cartridge_numbers":"e.g. HP 305XL or Canon PG-540","connectivity":"e.g. USB WiFi Ethernet","printer_type":"e.g. Inkjet All-in-One or Laser","color_support":"Color or Mono","condition_notes":"visible issues or No issues visible","additional_notes":"anything useful for ordering ink or maintenance"}`;
+    const prompt = `Identify this printer from both photos. Reply with ONLY a JSON object, nothing else, no markdown:
+{"brand":"","model":"","model_number":"","manufacturer":"","serial_number":"","ink_type":"Ink or Toner","ink_cartridge_numbers":"","connectivity":"","printer_type":"","color_support":"Color or Mono","condition_notes":"","additional_notes":""}`;
 
     // Try models in order until one works
     const models = [
@@ -40,7 +40,7 @@ exports.handler = async (event) => {
                   { inline_data: { mime_type: 'image/jpeg', data: backB64  } }
                 ]
               }],
-              generationConfig: { maxOutputTokens: 800, temperature: 0.1 }
+              generationConfig: { maxOutputTokens: 1500, temperature: 0.1 }
             })
           }
         );
