@@ -9,9 +9,10 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
 
   try {
-    const { frontB64, backB64, apiKey } = JSON.parse(event.body);
+    const { frontB64, backB64 } = JSON.parse(event.body);
     if (!frontB64 || !backB64) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing images' }) };
-    if (!apiKey)               return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing API key' }) };
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) return { statusCode: 500, headers, body: JSON.stringify({ error: 'API key not configured on server. Ask IT to set GROQ_API_KEY in Netlify environment variables.' }) };
 
     const prompt = `You are an expert at identifying office printers. Examine BOTH images (front and top of the same printer) and extract every detail visible. Return ONLY a raw JSON object — no markdown, no code fences, no explanation:
 {"brand":"","model":"","model_number":"","manufacturer":"","serial_number":"","ink_type":"Ink or Toner","ink_cartridge_numbers":"","connectivity":"","printer_type":"","color_support":"Color or Mono","condition_notes":"","additional_notes":""}`;
