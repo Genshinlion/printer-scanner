@@ -133,6 +133,15 @@
 <body>
 <div id="app"></div>
 <script>
+// ── Load saved user info from localStorage ────────────────────────────────
+try {
+  const saved = JSON.parse(localStorage.getItem('pcg_user_info') || '{}');
+  if (saved.pcNumber)  state.pcNumber  = saved.pcNumber;
+  if (saved.firstName) state.firstName = saved.firstName;
+  if (saved.lastName)  state.lastName  = saved.lastName;
+  if (saved.department)state.department= saved.department;
+} catch(e) {}
+
 // ── CONFIG — paste your Google Apps Script URL below ──────────────────────
 window.SHEET_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
 // ──────────────────────────────────────────────────────────────────────────
@@ -361,7 +370,13 @@ function render() {
     const pc=document.getElementById('pcInput'), fn=document.getElementById('firstInput'), ln=document.getElementById('lastInput'), dp=document.getElementById('deptInput'), nb=document.getElementById('nextBtn');
     const check = () => { nb.disabled = !(pc.value.trim()&&fn.value.trim()&&ln.value.trim()&&dp.value.trim()); };
     [pc,fn,ln,dp].forEach(el => el.addEventListener('input', check));
-    nb.onclick = () => { state.pcNumber=pc.value.trim(); state.firstName=fn.value.trim(); state.lastName=ln.value.trim(); state.department=dp.value.trim(); state.step='need'; render(); };
+    check();
+    nb.onclick = () => {
+      state.pcNumber=pc.value.trim(); state.firstName=fn.value.trim();
+      state.lastName=ln.value.trim(); state.department=dp.value.trim();
+      try { localStorage.setItem('pcg_user_info', JSON.stringify({ pcNumber:state.pcNumber, firstName:state.firstName, lastName:state.lastName, department:state.department })); } catch(e) {}
+      state.step='need'; render();
+    };
     return;
   }
 
