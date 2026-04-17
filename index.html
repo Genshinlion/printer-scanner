@@ -4,611 +4,527 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Printer Scanner">
 <title>🖨️ Printer Scanner</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
   :root {
-    --amber: #EF9F27;
-    --amber-dark: #BA7517;
-    --amber-light: #FAEEDA;
-    --amber-border: #FAC775;
-    --text: #1a1a1a;
-    --text-muted: #6b6b6b;
-    --bg: #f5f4f0;
-    --surface: #ffffff;
-    --border: rgba(0,0,0,0.1);
-    --green: #25D366;
-    --red-bg: #FCEBEB;
-    --red-border: #F7C1C1;
-    --red-text: #A32D2D;
+    --amber: #EF9F27; --amber-dark: #BA7517; --amber-light: #FAEEDA; --amber-border: #FAC775;
+    --text: #1a1a1a; --text-muted: #6b6b6b; --bg: #f5f4f0; --surface: #ffffff;
+    --border: rgba(0,0,0,0.1); --red-bg: #FCEBEB; --red-border: #F7C1C1; --red-text: #A32D2D;
+    --green: #34a853; --green-light: #e6f9ee; --green-border: #9fe3be;
+    --blue: #1a73e8; --blue-light: #e8f0fe; --blue-border: #b6cef7;
+    --urgent: #d93025; --urgent-light: #fce8e6; --urgent-border: #f5c6c3;
   }
-
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding-bottom: 40px;
-  }
-
-  .topbar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 14px 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 40px; }
+  .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 20px; display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 10; }
   .topbar-icon { font-size: 22px; }
-  .topbar-title { font-size: 17px; font-weight: 600; color: var(--text); }
+  .topbar-title { font-size: 17px; font-weight: 600; }
   .topbar-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
   .progress-wrap { padding: 14px 20px 6px; }
   .progress-steps { display: flex; gap: 5px; margin-bottom: 6px; }
   .ps { flex: 1; height: 4px; border-radius: 2px; background: #ddd; transition: background 0.3s; }
-  .ps.done   { background: var(--amber-dark); }
-  .ps.active { background: var(--amber); }
+  .ps.done { background: var(--amber-dark); } .ps.active { background: var(--amber); }
   .progress-label { font-size: 12px; color: var(--text-muted); }
-
   .content { padding: 16px 20px; }
-
-  .card {
-    background: var(--surface);
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    padding: 18px;
-    margin-bottom: 14px;
-  }
-  .card-label {
-    font-size: 11px; font-weight: 700; color: var(--amber-dark);
-    letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px;
-  }
-
-  .btn {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: 100%; padding: 16px; border-radius: 14px;
-    font-size: 16px; font-weight: 600; cursor: pointer; border: none;
-    margin-bottom: 10px; transition: opacity 0.15s, transform 0.1s;
-  }
+  .card { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); padding: 18px; margin-bottom: 14px; }
+  .card-label { font-size: 11px; font-weight: 700; color: var(--amber-dark); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+  .btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer; border: none; margin-bottom: 10px; transition: opacity 0.15s, transform 0.1s; }
   .btn:active { transform: scale(0.97); }
-  .btn-primary   { background: var(--amber); color: #412402; }
+  .btn-primary { background: var(--amber); color: #412402; }
   .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
   .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
-  .btn-email     { background: #1a73e8; color: #fff; font-size: 17px; padding: 18px; }
-  .btn-back {
-    background: none; border: none; color: var(--amber-dark);
-    font-size: 14px; cursor: pointer; padding: 8px 0;
-    display: flex; align-items: center; gap: 4px; margin-bottom: 14px;
-  }
-
-  .field-label { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block; }
-  input[type="password"], input[type="text"] {
-    width: 100%; padding: 14px 16px; border-radius: 12px;
-    border: 1.5px solid var(--border); background: #f9f8f5;
-    color: var(--text); font-size: 15px; outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  input:focus { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(239,159,39,0.18); }
+  .btn-email { background: var(--blue); color: #fff; font-size: 17px; padding: 18px; }
+  .btn-back { background: none; border: none; color: var(--amber-dark); font-size: 14px; cursor: pointer; padding: 8px 0; display: flex; align-items: center; gap: 4px; margin-bottom: 14px; }
+  .field-label { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block; font-weight: 500; }
+  input[type="text"] { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1.5px solid var(--border); background: #f9f8f5; color: var(--text); font-size: 15px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; margin-bottom: 14px; }
+  input[type="text"]:focus { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(239,159,39,0.18); }
   input[type="file"] { display: none; }
 
-  .key-banner {
-    background: #e6f9ee; border: 1px solid #9fe3be; border-radius: 12px;
-    padding: 12px 14px; display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
-  }
-  .key-banner-icon { font-size: 20px; }
-  .key-banner-text { flex: 1; font-size: 13px; color: #1a5c33; line-height: 1.4; }
-  .key-banner-change { font-size: 12px; color: var(--amber-dark); background: none; border: none; cursor: pointer; text-decoration: underline; flex-shrink: 0; }
+  /* Need buttons */
+  .need-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+  .need-btn { padding: 24px 10px; border-radius: 16px; border: 2px solid var(--border); background: #f9f8f5; cursor: pointer; text-align: center; transition: all 0.2s; }
+  .need-btn:active { transform: scale(0.97); }
+  .need-btn-icon { font-size: 36px; display: block; margin-bottom: 8px; }
+  .need-btn-label { font-size: 15px; font-weight: 700; color: var(--text); display: block; }
+  .need-btn-sub { font-size: 12px; color: var(--text-muted); display: block; margin-top: 3px; }
+  .need-btn.ink { border-color: var(--amber); background: var(--amber-light); }
+  .need-btn.paper { border-color: var(--green); background: var(--green-light); }
 
-  .info-box { background: #e8f0fe; border: 1px solid #b6cef7; border-radius: 12px; padding: 12px 14px; font-size: 13px; color: #1a3c8f; line-height: 1.5; margin-bottom: 14px; }
-  .tip-box  { background: var(--amber-light); border: 1px solid var(--amber-border); border-radius: 12px; padding: 12px 14px; font-size: 13px; color: #633806; line-height: 1.5; margin-bottom: 14px; }
+  /* Urgency toggle */
+  .urgency-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+  .urgency-btn { padding: 16px 10px; border-radius: 14px; border: 2px solid var(--border); background: #f9f8f5; cursor: pointer; text-align: center; transition: all 0.2s; }
+  .urgency-btn:active { transform: scale(0.97); }
+  .urgency-btn.selected-normal { border-color: var(--green); background: var(--green-light); }
+  .urgency-btn.selected-urgent { border-color: var(--urgent); background: var(--urgent-light); }
+  .urgency-icon { font-size: 26px; display: block; margin-bottom: 6px; }
+  .urgency-label { font-size: 14px; font-weight: 700; display: block; }
+  .urgency-sub { font-size: 11px; color: var(--text-muted); display: block; margin-top: 2px; }
 
-  /* Photo section */
+  /* Toner level */
+  .toner-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
+  .toner-btn { padding: 14px 6px; border-radius: 12px; border: 2px solid var(--border); background: #f9f8f5; cursor: pointer; text-align: center; transition: all 0.2s; }
+  .toner-btn:active { transform: scale(0.97); }
+  .toner-btn.selected { border-color: var(--amber); background: var(--amber-light); }
+  .toner-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+  .toner-label { font-size: 11px; font-weight: 700; display: block; color: var(--text); }
+
+  /* Photo */
   .photo-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-  .photo-option-btn {
-    padding: 18px 10px; border-radius: 14px;
-    border: 2px dashed var(--border); background: #f9f8f5;
-    cursor: pointer; text-align: center;
-    transition: border-color 0.2s, background 0.2s;
-    font-size: 13px; font-weight: 600; color: var(--text);
-  }
+  .photo-option-btn { padding: 18px 10px; border-radius: 14px; border: 2px dashed var(--border); background: #f9f8f5; cursor: pointer; text-align: center; transition: border-color 0.2s, background 0.2s; font-size: 13px; font-weight: 600; color: var(--text); }
   .photo-option-btn:active { background: var(--amber-light); border-color: var(--amber); }
   .photo-option-icon { font-size: 28px; display: block; margin-bottom: 6px; }
-
   .photo-preview-wrap { position: relative; border-radius: 14px; overflow: hidden; margin-bottom: 8px; }
   .photo-preview-wrap img { width: 100%; display: block; max-height: 240px; object-fit: cover; border-radius: 14px; border: 2px solid var(--amber); }
-  .photo-preview-label {
-    position: absolute; top: 8px; left: 8px;
-    background: var(--amber); color: #412402;
-    font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em;
-  }
+  .photo-preview-label { position: absolute; top: 8px; left: 8px; background: var(--amber); color: #412402; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
   .retake-row { display: flex; gap: 8px; margin-bottom: 4px; }
-  .retake-btn {
-    flex: 1; padding: 10px; border-radius: 10px;
-    border: 1px solid var(--border); background: var(--surface);
-    font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text);
-  }
-
-  .saved-photo-row {
-    background: var(--amber-light); border: 1px solid var(--amber-border);
-    border-radius: 12px; padding: 10px 14px;
-    display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
-  }
+  .retake-btn { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); font-size: 13px; font-weight: 600; cursor: pointer; color: var(--text); }
+  .saved-photo-row { background: var(--amber-light); border: 1px solid var(--amber-border); border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
   .saved-thumb { width: 60px; height: 50px; object-fit: cover; border-radius: 8px; }
   .saved-info { flex: 1; }
   .saved-title { font-size: 13px; font-weight: 600; color: var(--amber-dark); }
   .saved-retake { font-size: 12px; color: var(--amber-dark); background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; margin-top: 2px; display: block; }
 
+  /* Analysing */
   .analyzing-wrap { text-align: center; padding: 50px 20px; }
-  .spinner {
-    width: 50px; height: 50px; border: 4px solid #eee;
-    border-top-color: var(--amber); border-radius: 50%;
-    animation: spin 0.75s linear infinite; margin: 0 auto 20px;
-  }
+  .spinner { width: 50px; height: 50px; border: 4px solid #eee; border-top-color: var(--amber); border-radius: 50%; animation: spin 0.75s linear infinite; margin: 0 auto 20px; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .analyzing-title { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
   .analyzing-sub { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
 
+  /* Results */
   .thumb-row { display: flex; gap: 10px; margin-bottom: 14px; }
   .thumb-box { flex: 1; position: relative; border-radius: 12px; overflow: hidden; height: 90px; }
   .thumb-box img { width: 100%; height: 100%; object-fit: cover; }
-  .thumb-label {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    background: rgba(0,0,0,0.5); color: #fff;
-    font-size: 10px; font-weight: 700; text-align: center; padding: 3px; letter-spacing: 0.05em;
-  }
-
+  .thumb-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.5); color: #fff; font-size: 10px; font-weight: 700; text-align: center; padding: 3px; }
   .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .detail-cell { background: #f9f8f5; border-radius: 10px; padding: 12px; }
   .detail-cell.full { grid-column: 1 / -1; }
   .dc-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
   .dc-value { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; }
-
-  .ink-badge {
-    display: inline-block; background: var(--amber-light); color: #633806;
-    padding: 6px 14px; border-radius: 20px; font-size: 15px; font-weight: 700;
-    border: 1px solid var(--amber-border); margin-top: 4px;
-  }
-
+  .ink-badge { display: inline-block; background: var(--amber-light); color: #633806; padding: 6px 14px; border-radius: 20px; font-size: 15px; font-weight: 700; border: 1px solid var(--amber-border); margin-top: 4px; }
+  .rec-box { background: var(--blue-light); border: 1px solid var(--blue-border); border-radius: 12px; padding: 14px; margin-top: 10px; }
+  .rec-label { font-size: 11px; font-weight: 700; color: #1a3c8f; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .rec-text { font-size: 13px; color: #1a3c8f; line-height: 1.6; }
+  .urgent-badge { display: inline-block; background: var(--urgent-light); color: var(--urgent); border: 1px solid var(--urgent-border); border-radius: 20px; font-size: 12px; font-weight: 700; padding: 3px 12px; margin-left: 8px; vertical-align: middle; }
+  .normal-badge { display: inline-block; background: var(--green-light); color: #1a5c33; border: 1px solid var(--green-border); border-radius: 20px; font-size: 12px; font-weight: 700; padding: 3px 12px; margin-left: 8px; vertical-align: middle; }
   .notes-text { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
-  .notes-text strong { color: var(--text); }
+  .error-box { background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 12px; padding: 14px 16px; color: var(--red-text); font-size: 14px; margin-bottom: 14px; line-height: 1.5; }
 
-  .error-box {
-    background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 12px;
-    padding: 14px 16px; color: var(--red-text); font-size: 14px; margin-bottom: 14px; line-height: 1.5;
-  }
+  /* Confirmation */
+  .confirm-hero { text-align: center; padding: 40px 20px 20px; }
+  .confirm-icon { font-size: 64px; margin-bottom: 16px; }
+  .confirm-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+  .confirm-sub { font-size: 15px; color: var(--text-muted); line-height: 1.6; }
 
+  /* Welcome */
   .welcome-hero { text-align: center; padding: 30px 0 20px; }
   .welcome-emoji { font-size: 56px; margin-bottom: 14px; }
   .welcome-title { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
   .welcome-sub { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 280px; margin: 0 auto; }
-
   .steps-list { margin: 4px 0; }
   .step-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
   .step-item:last-child { border-bottom: none; }
   .step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--amber-light); color: var(--amber-dark); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
   .step-text { font-size: 14px; color: var(--text); line-height: 1.5; }
   .step-text strong { color: var(--text); }
-
-  @media (min-width: 500px) {
-    body { max-width: 460px; margin: 0 auto; }
-  }
+  @media (min-width: 500px) { body { max-width: 460px; margin: 0 auto; } }
 </style>
 </head>
 <body>
 <div id="app"></div>
-
 <script>
-// ── File inputs — separate camera vs gallery to fix Android 14 MDM issue ──
+// ── CONFIG — paste your Google Apps Script URL below ──────────────────────
+window.SHEET_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+// ──────────────────────────────────────────────────────────────────────────
+
 const inputCameraFront  = document.createElement('input');
 const inputGalleryFront = document.createElement('input');
 const inputCameraBack   = document.createElement('input');
 const inputGalleryBack  = document.createElement('input');
-
 [inputCameraFront, inputGalleryFront, inputCameraBack, inputGalleryBack].forEach(el => {
-  el.type = 'file';
-  el.accept = 'image/*';
-  document.body.appendChild(el);
+  el.type = 'file'; el.accept = 'image/*'; document.body.appendChild(el);
 });
-// Force camera on these:
 inputCameraFront.setAttribute('capture', 'environment');
-inputCameraBack.setAttribute('capture', 'environment');
-// Gallery inputs — no capture attr = Android shows chooser (Files / Gallery / Camera)
-
+inputCameraBack.setAttribute('capture',  'environment');
 inputCameraFront.onchange  = e => handlePhoto(e, 'front');
 inputGalleryFront.onchange = e => handlePhoto(e, 'front');
 inputCameraBack.onchange   = e => handlePhoto(e, 'back');
 inputGalleryBack.onchange  = e => handlePhoto(e, 'back');
 
-// ── API Key stored in localStorage ────────────────────────────────────────
+const TONER_LEVELS = [
+  { key: 'empty', icon: '🔴', label: 'Empty' },
+  { key: 'low',   icon: '🟠', label: 'Low'   },
+  { key: 'half',  icon: '🟡', label: 'Half'  },
+  { key: 'full',  icon: '🟢', label: 'Full'  }
+];
+
 let state = {
   step: 'welcome',
-  apiKey: '',
-  front: null,
-  back: null,
-  details: null,
-  error: ''
+  pcNumber: '', firstName: '', lastName: '', department: '',
+  need: '', urgency: '', tonerLevel: '',
+  front: null, back: null, details: null, error: ''
 };
 
-// Load saved key on startup
-
-function saveApiKey(key) {
-  state.apiKey = key;
-  try { localStorage.setItem(LS_KEY, key); } catch(e) {}
-}
-function clearApiKey() {
-  state.apiKey = '';
-  try { localStorage.removeItem(LS_KEY); } catch(e) {}
-}
-function hasKey() { return state.apiKey && state.apiKey.startsWith('gsk_'); }
-
-// ── Photo handling ─────────────────────────────────────────────────────────
 function toB64(file) {
   return new Promise((res, rej) => {
     const img = new Image();
     const blobUrl = URL.createObjectURL(file);
     img.onload = () => {
-      const MAX = 1280;
-      let w = img.width, h = img.height;
-      if (w > MAX || h > MAX) {
-        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-        else       { w = Math.round(w * MAX / h); h = MAX; }
-      }
+      const MAX = 1280; let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) { if (w > h) { h = Math.round(h*MAX/w); w = MAX; } else { w = Math.round(w*MAX/h); h = MAX; } }
       const canvas = document.createElement('canvas');
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
       URL.revokeObjectURL(blobUrl);
       res(canvas.toDataURL('image/jpeg', 0.85).split(',')[1]);
     };
-    img.onerror = rej;
-    img.src = blobUrl;
+    img.onerror = rej; img.src = blobUrl;
   });
 }
 
 async function handlePhoto(e, side) {
-  const file = e.target.files[0];
-  if (!file) return;
+  const file = e.target.files[0]; if (!file) return;
   const b64 = await toB64(file);
   const url  = URL.createObjectURL(file);
   if (side === 'front') state.front = { b64, url };
   else                  state.back  = { b64, url };
-  e.target.value = '';
-  render();
+  e.target.value = ''; render();
 }
 
-// ── AI analysis ───────────────────────────────────────────────────────────
 async function analyze() {
-  state.step = 'analyzing';
-  state.error = '';
-  render();
-
-  const prompt = `You are an expert at identifying office printers. Carefully examine BOTH images (front and back of the same printer) and extract every detail visible on the printer and its labels. Return ONLY a raw JSON object — no markdown, no code fences, no explanation whatsoever:
-{
-  "brand": "e.g. HP, Canon, Brother, Epson, Xerox",
-  "model": "full model name e.g. DeskJet 2710e",
-  "model_number": "product/part number from label",
-  "manufacturer": "company full name",
-  "serial_number": "exactly as shown on label, or null if not visible",
-  "ink_type": "Ink or Toner",
-  "ink_cartridge_numbers": "e.g. HP 305XL, Canon PG-540/CL-541 — be as specific as possible",
-  "connectivity": "e.g. USB, WiFi, Bluetooth, Ethernet",
-  "printer_type": "e.g. Inkjet All-in-One, Laser, Photo Printer",
-  "color_support": "Color or Mono",
-  "condition_notes": "visible damage, error lights, paper jams, low ink warnings — or say: No issues visible",
-  "additional_notes": "any other details useful for ordering ink, toner or spare parts"
-}`;
-
-  // Warn if opened from local file — fetch will be blocked
-  if (location.protocol === 'file:') {
-    state.error = 'FILE:// ERROR — This app must be opened from a web address (https://...), not from a local file or email attachment. Please ask IT to host it online, then open the link in Chrome.';
-    state.step  = 'back';
-    render();
-    return;
-  }
-
+  state.step = 'analyzing'; state.error = ''; render();
   try {
     let resp;
     try {
       resp = await fetch('/.netlify/functions/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          frontB64: state.front.b64,
-          backB64:  state.back.b64
-        })
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ frontB64: state.front.b64, backB64: state.back.b64 })
       });
-    } catch (networkErr) {
-      throw new Error('Cannot reach the server. Check your internet connection. Error: ' + networkErr.message);
-    }
-
+    } catch (netErr) { throw new Error('Cannot reach the server. Check your internet connection.'); }
     const rawText = await resp.text();
-
     if (!resp.ok) {
-      let msg = rawText;
-      try { msg = JSON.parse(rawText).error || rawText; } catch(e) {}
-      if (resp.status === 401 || resp.status === 403) throw new Error('Invalid Gemini API key. Get a free key at aistudio.google.com');
-      if (resp.status === 429) throw new Error('Rate limit hit. Wait a moment and try again — free tier allows 1,500 requests/day.');
+      let msg = rawText; try { msg = JSON.parse(rawText).error || rawText; } catch(e) {}
       throw new Error('Error ' + resp.status + ': ' + msg);
     }
-
-    const clean = rawText.replace(/```json|```/g, '').trim();
-    state.details = JSON.parse(clean);
-    state.step    = 'results';
-  } catch (err) {
-    state.error = err.message;
-    state.step  = 'back';
-  }
+    state.details = JSON.parse(rawText.replace(/```json|```/g,'').trim());
+    state.step = 'results';
+  } catch (err) { state.error = err.message; state.step = 'back'; }
   render();
 }
 
-// ── Quick API key test (no image needed) ──────────────────────────────────
-async function testApiKey() {
-  const btn = document.getElementById('testBtn');
-  if (!btn) return;
-  btn.textContent = 'Testing…';
-  btn.disabled = true;
-
-  if (location.protocol === 'file:') {
-    document.getElementById('testResult').innerHTML =
-      '<span style="color:var(--red-text)">❌ Opened as a local file — must be hosted at an https:// URL first.</span>';
-    btn.textContent = 'Test API Key';
-    btn.disabled = false;
-    return;
-  }
-
-  try {
-    const resp = await fetch('/.netlify/functions/analyze', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ frontB64: 'test', backB64: 'test' })
-    });
-    const data = await resp.json();
-    if (resp.ok || resp.status === 400) {
-      document.getElementById('testResult').innerHTML = '<span style="color:#1a7a40">✅ Connection to server working! Key looks good.</span>';
-    } else {
-      const msg = data.error || resp.statusText;
-      document.getElementById('testResult').innerHTML = '<span style="color:var(--red-text)">❌ ' + resp.status + ': ' + msg + '</span>';
-    }
-  } catch(e) {
-    document.getElementById('testResult').innerHTML = '<span style="color:var(--red-text)">❌ Network error: ' + e.message + '</span>';
-  }
-  btn.textContent = 'Test API Key';
-  btn.disabled = false;
-}
-
-// ── WhatsApp share ────────────────────────────────────────────────────────
 function b64ToBlob(b64) {
-  const bytes = atob(b64);
-  const arr = new Uint8Array(bytes.length);
+  const bytes = atob(b64); const arr = new Uint8Array(bytes.length);
   for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
   return new Blob([arr], { type: 'image/jpeg' });
 }
 
+async function logToSheet(details) {
+  const sheetUrl = window.SHEET_URL;
+  if (!sheetUrl) return;
+  try {
+    await fetch(sheetUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name:              state.firstName + ' ' + state.lastName,
+        department:        state.department,
+        pcNumber:          state.pcNumber,
+        requestType:       state.need === 'ink' ? 'Ink / Toner' : 'Paper',
+        urgency:           state.urgency === 'urgent' ? 'Urgent' : 'Normal',
+        brand:             details ? details.brand             : '',
+        model:             details ? details.model             : '',
+        modelNumber:       details ? details.model_number      : '',
+        serialNumber:      details ? details.serial_number     : '',
+        inkType:           details ? details.ink_type          : '',
+        cartridgeNumbers:  details ? details.ink_cartridge_numbers : '',
+        tonerLevel:        state.tonerLevel ? state.tonerLevel.charAt(0).toUpperCase() + state.tonerLevel.slice(1) : '',
+        inkRecommendation: details ? (details.ink_recommendation || '') : '',
+        conditionNotes:    details ? (details.condition_notes    || '') : ''
+      })
+    });
+  } catch(e) {
+    console.warn('Sheet logging failed (non-critical):', e.message);
+  }
+}
+
 async function sendEmail() {
   const d = state.details;
-  const subject = 'Printer Scan Report — ' + d.brand + ' ' + d.model;
-  const body = [
-    'PRINTER SCAN REPORT',
-    '====================',
-    '',
-    'PRINTER DETAILS',
-    'Brand:        ' + d.brand,
-    'Model:        ' + d.model,
-    'Model No:     ' + (d.model_number || '—'),
-    'Manufacturer: ' + d.manufacturer,
-    'Serial No:    ' + (d.serial_number || 'Not visible on label'),
-    '',
-    'INK / TONER TO ORDER',
-    '====================',
-    'Ink Type:     ' + d.ink_type,
-    'Cartridge No: ' + d.ink_cartridge_numbers,
-    '',
-    'NOTES',
-    'Condition:    ' + d.condition_notes,
-    'Other:        ' + d.additional_notes,
-    '',
-    '— Sent from Printer Scanner App'
-  ].join('\n');
+  const name    = state.firstName + ' ' + state.lastName;
+  const isInk   = state.need === 'ink';
+  const urgency = state.urgency === 'urgent' ? '🔴 URGENT' : '🟢 Normal';
+  const subject = (state.urgency === 'urgent' ? '🔴 URGENT — ' : '') +
+                  (isInk ? 'Ink Request' : 'Paper Request') +
+                  ' — ' + name + ' (' + state.department + ', PC: ' + state.pcNumber + ')';
 
-  // Try Web Share API with image attachments (works on Android/iOS)
+  const lines = [
+    (isInk ? 'INK REQUEST' : 'PAPER REQUEST'),
+    '====================',
+    'Priority:   ' + urgency,
+    '',
+    'SUBMITTED BY',
+    'Name:       ' + name,
+    'Department: ' + state.department,
+    'PC Number:  ' + state.pcNumber,
+    ''
+  ];
+
+  if (isInk && d) {
+    lines.push(
+      'PRINTER DETAILS',
+      'Brand:        ' + d.brand,
+      'Model:        ' + d.model,
+      'Model No:     ' + (d.model_number || '—'),
+      'Manufacturer: ' + d.manufacturer,
+      'Serial No:    ' + (d.serial_number || 'Not visible'),
+      'Toner Level:  ' + (state.tonerLevel ? state.tonerLevel.charAt(0).toUpperCase() + state.tonerLevel.slice(1) : '—'),
+      '',
+      'INK / TONER TO ORDER',
+      '====================',
+      'Ink Type:     ' + d.ink_type,
+      'Cartridge No: ' + d.ink_cartridge_numbers,
+      '',
+      'AI ORDERING RECOMMENDATION',
+      '==========================',
+      d.ink_recommendation || 'See cartridge number above.',
+      ''
+    );
+    if (d.condition_notes) lines.push('CONDITION: ' + d.condition_notes, '');
+  } else {
+    lines.push('REQUEST: Paper restock needed.');
+  }
+  lines.push('— Sent from Printer Scanner App');
+  const body = lines.join('\n');
+
+  // Log to Google Sheet silently in background
+  logToSheet(state.need === 'ink' ? d : null);
+
   if (navigator.share && navigator.canShare) {
     try {
       const files = [];
-      if (state.front && state.front.b64) files.push(new File([b64ToBlob(state.front.b64)], 'printer-front.jpg', { type: 'image/jpeg' }));
-      if (state.back  && state.back.b64)  files.push(new File([b64ToBlob(state.back.b64)],  'printer-top.jpg',   { type: 'image/jpeg' }));
-      if (files.length && navigator.canShare({ files })) {
-        await navigator.share({ title: subject, text: body, files });
-        return;
-      }
-    } catch(e) {
-      if (e.name !== 'AbortError') console.warn('Share failed:', e);
-    }
+      if (isInk && state.front && state.front.b64) files.push(new File([b64ToBlob(state.front.b64)], 'printer-front.jpg', { type: 'image/jpeg' }));
+      if (isInk && state.back  && state.back.b64)  files.push(new File([b64ToBlob(state.back.b64)],  'printer-top.jpg',   { type: 'image/jpeg' }));
+      if (files.length && navigator.canShare({ files })) { await navigator.share({ title: subject, text: body, files }); state.step = 'confirm'; render(); return; }
+    } catch(e) { if (e.name !== 'AbortError') console.warn('Share failed:', e); }
   }
-
-  // Fallback — open email app without attachments
   window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  setTimeout(() => { state.step = 'confirm'; render(); }, 1500);
 }
 
-// ── UI helpers ────────────────────────────────────────────────────────────
 function topbar(subtitle) {
-  return `
-  <div class="topbar">
-    <span class="topbar-icon">🖨️</span>
-    <div>
-      <div class="topbar-title">Printer Scanner</div>
-      ${subtitle ? '<div class="topbar-sub">' + subtitle + '</div>' : ''}
-    </div>
-
-  </div>`;
+  return '<div class="topbar"><span class="topbar-icon">🖨️</span><div><div class="topbar-title">Printer Scanner</div>' + (subtitle ? '<div class="topbar-sub">' + subtitle + '</div>' : '') + '</div></div>';
 }
 
-const STEPS = ['front','back','analyzing','results'];
+const STEPS = ['info','need','details','front','back','analyzing','results'];
 function progressBar(current) {
   const idx = STEPS.indexOf(current);
   return '<div class="progress-wrap"><div class="progress-steps">' +
     STEPS.map((_,i) => '<div class="ps ' + (i<idx?'done':i===idx?'active':'') + '"></div>').join('') +
-    '</div><div class="progress-label">Step ' + (Math.max(idx,0)+1) + ' of ' + STEPS.length + '</div></div>';
+    '</div><div class="progress-label">Step ' + (idx+1) + ' of ' + STEPS.length + '</div></div>';
 }
 
 function photoUI(side, photo) {
-  const cam = side === 'front' ? 'inputCameraFront'  : 'inputCameraBack';
-  const gal = side === 'front' ? 'inputGalleryFront' : 'inputGalleryBack';
-  if (photo) {
-    return '<div class="photo-preview-wrap">' +
-      '<img src="' + photo.url + '" alt="' + side + '">' +
-      '<div class="photo-preview-label">✓ ' + side.toUpperCase() + '</div>' +
-      '</div>' +
-      '<div class="retake-row">' +
-      '<button class="retake-btn" onclick="' + cam + '.click()">📷 Camera</button>' +
-      '<button class="retake-btn" onclick="' + gal + '.click()">🖼️ Gallery</button>' +
-      '</div>';
-  }
-  return '<div class="photo-options">' +
-    '<div class="photo-option-btn" onclick="' + cam + '.click()"><span class="photo-option-icon">📷</span>Open Camera</div>' +
-    '<div class="photo-option-btn" onclick="' + gal + '.click()"><span class="photo-option-icon">🖼️</span>Gallery / Files</div>' +
-    '</div>' +
-    '<p style="font-size:12px;color:#999;text-align:center;margin-top:4px;">If camera does not open, tap Gallery and choose a photo you already took</p>';
+  const cam = side==='front'?'inputCameraFront':'inputCameraBack';
+  const gal = side==='front'?'inputGalleryFront':'inputGalleryBack';
+  if (photo) return '<div class="photo-preview-wrap"><img src="'+photo.url+'" alt="'+side+'"><div class="photo-preview-label">✓ '+side.toUpperCase()+'</div></div><div class="retake-row"><button class="retake-btn" onclick="'+cam+'.click()">📷 Camera</button><button class="retake-btn" onclick="'+gal+'.click()">🖼️ Gallery</button></div>';
+  return '<div class="photo-options"><div class="photo-option-btn" onclick="'+cam+'.click()"><span class="photo-option-icon">📷</span>Open Camera</div><div class="photo-option-btn" onclick="'+gal+'.click()"><span class="photo-option-icon">🖼️</span>Gallery / Files</div></div><p style="font-size:12px;color:#999;text-align:center;margin-top:4px;">If camera does not open, tap Gallery and choose a photo</p>';
 }
 
-// ── Main render ───────────────────────────────────────────────────────────
 function render() {
   const app = document.getElementById('app');
 
+  // ── Welcome ──
   if (state.step === 'welcome') {
-    app.innerHTML =
-      topbar(null) +
-      '<div class="content">' +
-      '<div class="welcome-hero">' +
-        '<div class="welcome-emoji">🖨️</div>' +
-        '<div class="welcome-title">Printer Scanner</div>' +
-        '<div class="welcome-sub">Snap 2 photos. AI reads all the details. Send straight to WhatsApp.</div>' +
-      '</div>' +
-      (hasKey()
-        ? '<div class="key-banner"><span class="key-banner-icon">✅</span><div class="key-banner-text"><strong>API key saved</strong> — ready to scan.</div><button class="key-banner-change" onclick="state.step=\'setup\';render()">Change</button></div>'
-        : '<div class="info-box">ℹ️ You need an <strong>OpenAI API key</strong> to use this app. Enter it once — it saves permanently to this tablet.</div>'
-      ) +
+    app.innerHTML = topbar(null) +
+      '<div class="content"><div class="welcome-hero"><div class="welcome-emoji">🖨️</div><div class="welcome-title">Printer Scanner</div><div class="welcome-sub">Quick supply requests — ink or paper — sent straight to IT.</div></div>' +
       '<div class="card"><div class="card-label">How it works</div><div class="steps-list">' +
-        '<div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>Enter API key</strong> — saved to this tablet, never asked again</div></div>' +
-        '<div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>Photo the front</strong> — brand name &amp; control panel</div></div>' +
-        '<div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>Photo the top</strong> — serial number &amp; model sticker</div></div>' +
-        '<div class="step-item"><div class="step-num">4</div><div class="step-text"><strong>AI reads everything</strong> — brand, ink code, serial &amp; more</div></div>' +
-        '<div class="step-item"><div class="step-num">5</div><div class="step-text"><strong>Send via WhatsApp</strong> — full report, formatted and ready</div></div>' +
+        '<div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>Enter your details</strong> — name, department &amp; PC number</div></div>' +
+        '<div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>Choose what you need</strong> — ink or paper</div></div>' +
+        '<div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>Set urgency &amp; toner level</strong> — so IT can prioritise</div></div>' +
+        '<div class="step-item"><div class="step-num">4</div><div class="step-text"><strong>Take 2 photos</strong> — AI identifies exact cartridges</div></div>' +
+        '<div class="step-item"><div class="step-num">5</div><div class="step-text"><strong>Send report + photos</strong> — emailed to IT instantly</div></div>' +
       '</div></div>' +
-      '<button class="btn btn-primary" id="startBtn">' + (hasKey() ? 'Start Scanning →' : 'Set Up API Key →') + '</button>' +
-      '</div>';
-
-    document.getElementById('startBtn').onclick = () => { state.step = hasKey() ? 'front' : 'setup'; render(); };
+      '<button class="btn btn-primary" id="startBtn">Get Started →</button></div>';
+    document.getElementById('startBtn').onclick = () => { state.step = 'info'; render(); };
     return;
   }
 
+  // ── Info ──
+  if (state.step === 'info') {
+    app.innerHTML = topbar('Your details') + progressBar('info') +
+      '<div class="content"><div class="card"><div class="card-label">📋 Your details</div>' +
+        '<label class="field-label">PC Number</label><input type="text" id="pcInput" placeholder="e.g. PC-1042" value="'+state.pcNumber+'" />' +
+        '<label class="field-label">First Name</label><input type="text" id="firstInput" placeholder="e.g. John" value="'+state.firstName+'" />' +
+        '<label class="field-label">Last Name</label><input type="text" id="lastInput" placeholder="e.g. Smith" value="'+state.lastName+'" />' +
+        '<label class="field-label">Department / Location</label><input type="text" id="deptInput" placeholder="e.g. HR, 3rd Floor, Reception" value="'+state.department+'" style="margin-bottom:0"/>' +
+      '</div>' +
+      '<button class="btn btn-primary" id="nextBtn" disabled>Next →</button></div>';
+    const pc=document.getElementById('pcInput'), fn=document.getElementById('firstInput'), ln=document.getElementById('lastInput'), dp=document.getElementById('deptInput'), nb=document.getElementById('nextBtn');
+    const check = () => { nb.disabled = !(pc.value.trim()&&fn.value.trim()&&ln.value.trim()&&dp.value.trim()); };
+    [pc,fn,ln,dp].forEach(el => el.addEventListener('input', check));
+    nb.onclick = () => { state.pcNumber=pc.value.trim(); state.firstName=fn.value.trim(); state.lastName=ln.value.trim(); state.department=dp.value.trim(); state.step='need'; render(); };
+    return;
+  }
+
+  // ── Need ──
+  if (state.step === 'need') {
+    app.innerHTML = topbar('What do you need?') + progressBar('need') +
+      '<div class="content"><button class="btn-back" id="backBtn">← Back</button>' +
+      '<div class="card"><div class="card-label">What do you need?</div>' +
+        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">Select what you need. Ink requests require 2 printer photos so IT knows exactly what to order.</p>' +
+        '<div class="need-options">' +
+          '<div class="need-btn ink" id="inkBtn"><span class="need-btn-icon">🖨️</span><span class="need-btn-label">Ink / Toner</span><span class="need-btn-sub">Take printer photos</span></div>' +
+          '<div class="need-btn paper" id="paperBtn"><span class="need-btn-icon">📄</span><span class="need-btn-label">Paper</span><span class="need-btn-sub">Send request now</span></div>' +
+        '</div>' +
+      '</div></div>';
+    document.getElementById('backBtn').onclick  = () => { state.step='info'; render(); };
+    document.getElementById('inkBtn').onclick   = () => { state.need='ink';   state.step='details'; render(); };
+    document.getElementById('paperBtn').onclick = () => { state.need='paper'; state.step='details'; render(); };
+    return;
+  }
+
+  // ── Details (urgency + toner) ──
+  if (state.step === 'details') {
+    const isInk = state.need === 'ink';
+    const urgencyHTML =
+      '<div class="card"><div class="card-label">⚡ Priority</div>' +
+        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:12px;">How urgent is this request?</p>' +
+        '<div class="urgency-row">' +
+          '<div class="urgency-btn '+(state.urgency==='normal'?'selected-normal':'')+'" id="normalBtn"><span class="urgency-icon">🟢</span><span class="urgency-label">Normal</span><span class="urgency-sub">Order when possible</span></div>' +
+          '<div class="urgency-btn '+(state.urgency==='urgent'?'selected-urgent':'')+'" id="urgentBtn"><span class="urgency-icon">🔴</span><span class="urgency-label">Urgent</span><span class="urgency-sub">Need it ASAP</span></div>' +
+        '</div>' +
+      '</div>';
+    const tonerHTML = isInk ?
+      '<div class="card"><div class="card-label">🖨️ Current Toner / Ink Level</div>' +
+        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:12px;">How much ink or toner is left?</p>' +
+        '<div class="toner-options">' +
+          TONER_LEVELS.map(t => '<div class="toner-btn '+(state.tonerLevel===t.key?'selected':'')+'" id="toner-'+t.key+'"><span class="toner-icon">'+t.icon+'</span><span class="toner-label">'+t.label+'</span></div>').join('') +
+        '</div>' +
+      '</div>' : '';
+    const canProceed = state.urgency && (isInk ? state.tonerLevel : true);
+    app.innerHTML = topbar('Priority & details') + progressBar('details') +
+      '<div class="content"><button class="btn-back" id="backBtn">← Back</button>' +
+      urgencyHTML + tonerHTML +
+      '<button class="btn btn-primary" id="nextBtn" '+(canProceed?'':'disabled')+'>'+(isInk?'Next — Take Photos →':'Send Paper Request →')+'</button></div>';
+    document.getElementById('backBtn').onclick = () => { state.step='need'; render(); };
+    document.getElementById('normalBtn').onclick = () => { state.urgency='normal'; render(); };
+    document.getElementById('urgentBtn').onclick = () => { state.urgency='urgent'; render(); };
+    TONER_LEVELS.forEach(t => {
+      const el = document.getElementById('toner-'+t.key);
+      if (el) el.onclick = () => { state.tonerLevel=t.key; render(); };
+    });
+    document.getElementById('nextBtn').onclick = () => { state.step = isInk ? 'front' : 'paper'; render(); };
+    return;
+  }
+
+  // ── Paper confirmation ──
+  if (state.step === 'paper') {
+    const urgencyBadge = state.urgency==='urgent' ? '<span class="urgent-badge">🔴 URGENT</span>' : '<span class="normal-badge">🟢 Normal</span>';
+    app.innerHTML = topbar('Paper Request') +
+      '<div class="content"><button class="btn-back" id="backBtn">← Back</button>' +
+      '<div class="card"><div style="text-align:center;padding:20px 0 10px"><div style="font-size:48px;margin-bottom:12px">📄</div>' +
+        '<p style="font-size:17px;font-weight:700;margin-bottom:6px;">Paper Request ' + urgencyBadge + '</p>' +
+        '<p style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-top:10px;">Submitting for <strong>'+state.firstName+' '+state.lastName+'</strong><br>'+state.department+' — PC: '+state.pcNumber+'</p>' +
+      '</div></div>' +
+      '<button class="btn btn-email" id="emailBtn">📧 Send Paper Request</button></div>';
+    document.getElementById('backBtn').onclick  = () => { state.step='details'; render(); };
+    document.getElementById('emailBtn').onclick = () => sendEmail();
+    return;
+  }
+
+  // ── Front photo ──
   if (state.step === 'front') {
-    app.innerHTML =
-      topbar('Step 2 — Front photo') +
-      progressBar('front') +
-      '<div class="content">' +
-      '<button class="btn-back" id="backBtn">← Back</button>' +
+    app.innerHTML = topbar('Step 5 — Front photo') + progressBar('front') +
+      '<div class="content"><button class="btn-back" id="backBtn">← Back</button>' +
       '<div class="card"><div class="card-label">📸 Front of printer</div>' +
-        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">Make sure the <strong>brand name</strong>, <strong>model label</strong> and <strong>control panel</strong> are clearly in frame. This is the <strong>front</strong> of the printer.</p>' +
+        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">Make sure the <strong>brand name</strong>, <strong>model label</strong> and <strong>control panel</strong> are clearly in frame.</p>' +
         photoUI('front', state.front) +
       '</div>' +
-      '<button class="btn btn-primary" id="nextBtn" ' + (state.front?'':'disabled') + '>Next — Back Photo →</button>' +
-      '</div>';
-
-    document.getElementById('backBtn').onclick = () => { state.step = 'setup'; render(); };
-    document.getElementById('nextBtn').onclick = () => { state.step = 'back'; render(); };
-    document.getElementById('keyBtn').onclick  = () => { state.step = 'setup'; render(); };
+      '<button class="btn btn-primary" id="nextBtn" '+(state.front?'':'disabled')+'>Next — Top Photo →</button></div>';
+    document.getElementById('backBtn').onclick = () => { state.step='details'; render(); };
+    document.getElementById('nextBtn').onclick = () => { state.step='back'; render(); };
     return;
   }
 
+  // ── Top photo ──
   if (state.step === 'back') {
-    app.innerHTML =
-      topbar('Step 3 — Top photo') +
-      progressBar('back') +
-      '<div class="content">' +
-      '<button class="btn-back" id="backBtn">← Back</button>' +
-      (state.front
-        ? '<div class="saved-photo-row"><img class="saved-thumb" src="' + state.front.url + '" alt="front"><div class="saved-info"><div class="saved-title">✅ Front photo saved</div><button class="saved-retake" id="retakeFront">Retake front photo</button></div></div>'
-        : ''
-      ) +
-      '<div class="card"><div class="card-label">📸 Back of printer</div>' +
-        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">Take a photo of the <strong>top</strong> of the printer — this usually shows the model sticker, serial number and any status labels.</p>' +
+    app.innerHTML = topbar('Step 6 — Top photo') + progressBar('back') +
+      '<div class="content"><button class="btn-back" id="backBtn">← Back</button>' +
+      (state.front?'<div class="saved-photo-row"><img class="saved-thumb" src="'+state.front.url+'" alt="front"><div class="saved-info"><div class="saved-title">✅ Front photo saved</div><button class="saved-retake" id="retakeFront">Retake front photo</button></div></div>':'') +
+      '<div class="card"><div class="card-label">📸 Top of printer</div>' +
+        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">Take a photo of the <strong>top</strong> of the printer — shows the model sticker and serial number label.</p>' +
         photoUI('back', state.back) +
       '</div>' +
-      (state.error ? '<div class="error-box">⚠️ <strong>Error:</strong> ' + state.error + '<br><br><small>Check your API key is correct and you have internet access.</small></div>' : '') +
-      '<button class="btn btn-primary" id="analyseBtn" ' + (state.back?'':'disabled') + '>🔍 Analyse Printer</button>' +
-      '</div>';
-
-    document.getElementById('backBtn').onclick    = () => { state.step = 'front'; render(); };
+      (state.error?'<div class="error-box">⚠️ '+state.error+'</div>':'') +
+      '<button class="btn btn-primary" id="analyseBtn" '+(state.back?'':'disabled')+'>🔍 Analyse Printer</button></div>';
+    document.getElementById('backBtn').onclick = () => { state.step='front'; render(); };
     document.getElementById('analyseBtn').onclick = () => analyze();
-    const rf = document.getElementById('retakeFront');
-    if (rf) rf.onclick = () => { state.step = 'front'; render(); };
+    const rf = document.getElementById('retakeFront'); if (rf) rf.onclick = () => { state.step='front'; render(); };
     return;
   }
 
+  // ── Analysing ──
   if (state.step === 'analyzing') {
-    app.innerHTML =
-      topbar('Analysing…') +
-      progressBar('analyzing') +
+    app.innerHTML = topbar('Analysing…') + progressBar('analyzing') +
       '<div class="content"><div class="card"><div class="analyzing-wrap">' +
-        '<div class="spinner"></div>' +
-        '<div class="analyzing-title">Reading your printer…</div>' +
-        '<div class="analyzing-sub">AI is identifying the brand, model, serial number, ink cartridges and condition. This takes 10–20 seconds.</div>' +
+        '<div class="spinner"></div><div class="analyzing-title">Reading your printer…</div>' +
+        '<div class="analyzing-sub">AI is identifying your printer and looking up the exact ink cartridges. This takes 10–20 seconds.</div>' +
       '</div></div></div>';
     return;
   }
 
+  // ── Results ──
   if (state.step === 'results' && state.details) {
     const d = state.details;
-    app.innerHTML =
-      topbar(d.brand + ' ' + d.model) +
-      progressBar('results') +
+    const urgencyBadge = state.urgency==='urgent' ? '<span class="urgent-badge">🔴 URGENT</span>' : '<span class="normal-badge">🟢 Normal</span>';
+    const tonerInfo = state.tonerLevel ? TONER_LEVELS.find(t=>t.key===state.tonerLevel) : null;
+    app.innerHTML = topbar(d.brand + ' ' + d.model) + progressBar('results') +
       '<div class="content">' +
       '<div class="thumb-row">' +
-        (state.front ? '<div class="thumb-box"><img src="' + state.front.url + '" alt="front"><div class="thumb-label">FRONT</div></div>' : '') +
-        (state.back  ? '<div class="thumb-box"><img src="' + state.back.url  + '" alt="top" ><div class="thumb-label">BACK</div></div>'  : '') +
+        (state.front?'<div class="thumb-box"><img src="'+state.front.url+'" alt="front"><div class="thumb-label">FRONT</div></div>':'') +
+        (state.back ?'<div class="thumb-box"><img src="'+state.back.url +'" alt="top"  ><div class="thumb-label">TOP</div></div>':'') +
       '</div>' +
+      '<div class="card"><div class="card-label">📋 Request summary</div><div class="detail-grid">' +
+        '<div class="detail-cell full"><div class="dc-label">Submitted by</div><div class="dc-value">'+state.firstName+' '+state.lastName+' '+urgencyBadge+'</div></div>' +
+        '<div class="detail-cell"><div class="dc-label">Department</div><div class="dc-value">'+state.department+'</div></div>' +
+        '<div class="detail-cell"><div class="dc-label">PC Number</div><div class="dc-value">'+state.pcNumber+'</div></div>' +
+        (tonerInfo?'<div class="detail-cell"><div class="dc-label">Toner level</div><div class="dc-value">'+tonerInfo.icon+' '+tonerInfo.label+'</div></div>':'') +
+      '</div></div>' +
       '<div class="card"><div class="card-label">🖨️ Printer details</div><div class="detail-grid">' +
-        '<div class="detail-cell"><div class="dc-label">Brand</div><div class="dc-value">' + d.brand + '</div></div>' +
-        '<div class="detail-cell"><div class="dc-label">Type</div><div class="dc-value">' + d.printer_type + '</div></div>' +
-        '<div class="detail-cell full"><div class="dc-label">Model</div><div class="dc-value">' + d.model + '</div></div>' +
-        '<div class="detail-cell"><div class="dc-label">Model no.</div><div class="dc-value">' + (d.model_number||'—') + '</div></div>' +
-        '<div class="detail-cell"><div class="dc-label">Serial no.</div><div class="dc-value">' + (d.serial_number||'Not found') + '</div></div>' +
-        '<div class="detail-cell"><div class="dc-label">Colour</div><div class="dc-value">' + d.color_support + '</div></div>' +
-        '<div class="detail-cell"><div class="dc-label">Connectivity</div><div class="dc-value">' + d.connectivity + '</div></div>' +
+        '<div class="detail-cell"><div class="dc-label">Brand</div><div class="dc-value">'+d.brand+'</div></div>' +
+        '<div class="detail-cell"><div class="dc-label">Type</div><div class="dc-value">'+d.printer_type+'</div></div>' +
+        '<div class="detail-cell full"><div class="dc-label">Model</div><div class="dc-value">'+d.model+'</div></div>' +
+        '<div class="detail-cell"><div class="dc-label">Model no.</div><div class="dc-value">'+(d.model_number||'—')+'</div></div>' +
+        '<div class="detail-cell"><div class="dc-label">Serial no.</div><div class="dc-value">'+(d.serial_number||'Not found')+'</div></div>' +
       '</div></div>' +
       '<div class="card"><div class="card-label">🖨️ Ink / toner to order</div>' +
-        '<div class="dc-label" style="margin-bottom:6px;">Cartridge number</div>' +
-        '<span class="ink-badge">' + d.ink_cartridge_numbers + '</span>' +
-        '<div style="margin-top:14px;"><div class="dc-label" style="margin-bottom:4px;">Ink type</div><div class="dc-value">' + d.ink_type + '</div></div>' +
+        '<div class="dc-label" style="margin-bottom:6px;">Cartridge number</div><span class="ink-badge">'+d.ink_cartridge_numbers+'</span>'+(d.verified_from_db?' <span style="background:#e6f9ee;color:#1a7a40;border:1px solid #9fe3be;border-radius:20px;font-size:11px;font-weight:700;padding:3px 10px;">✓ Verified</span>':' <span style="background:#faeeda;color:#ba7517;border:1px solid #fac775;border-radius:20px;font-size:11px;font-weight:700;padding:3px 10px;">⚠️ Confirm before ordering</span>') +
+        '<div style="margin-top:14px;"><div class="dc-label" style="margin-bottom:4px;">Ink type</div><div class="dc-value">'+d.ink_type+'</div></div>' +
+        (d.ink_recommendation?'<div class="rec-box"><div class="rec-label">💡 AI Ordering Recommendation</div><div class="rec-text">'+d.ink_recommendation+'</div>'+(d.search_source?'<div style="font-size:11px;color:#1a3c8f;margin-top:6px;opacity:0.7;">Source: '+d.search_source+'</div>':'')+'</div>':'') +
       '</div>' +
-      ((d.condition_notes||d.additional_notes)
-        ? '<div class="card"><div class="card-label">📋 Notes</div>' +
-          (d.condition_notes ? '<p class="notes-text" style="margin-bottom:8px;"><strong>Condition:</strong> ' + d.condition_notes + '</p>' : '') +
-          (d.additional_notes ? '<p class="notes-text"><strong>Other:</strong> ' + d.additional_notes + '</p>' : '') +
-          '</div>'
-        : ''
-      ) +
-      '<button class="btn btn-email" id="emailBtn">📧 Send as Email</button>' +
-      '<button class="btn btn-secondary" id="rescanBtn">Scan another printer</button>' +
-      '</div>';
-
+      (d.condition_notes?'<div class="card"><div class="card-label">📋 Condition</div><p class="notes-text">'+d.condition_notes+'</p></div>':'') +
+      '<button class="btn btn-email" id="emailBtn">📧 Send Report + Photos</button>' +
+      '<button class="btn btn-secondary" id="rescanBtn">Start new request</button></div>';
     document.getElementById('emailBtn').onclick  = () => sendEmail();
-    document.getElementById('rescanBtn').onclick = () => resetScan();
+    document.getElementById('rescanBtn').onclick = () => { state={step:'welcome',pcNumber:'',firstName:'',lastName:'',department:'',need:'',urgency:'',tonerLevel:'',front:null,back:null,details:null,error:''}; render(); };
     return;
   }
-}
 
-function resetScan() {
-  state.step    = 'front';
-  state.front   = null;
-  state.back    = null;
-  state.details = null;
-  state.error   = '';
-  render();
+  // ── Confirmation ──
+  if (state.step === 'confirm') {
+    const isInk = state.need === 'ink';
+    app.innerHTML = topbar('Request Sent') +
+      '<div class="content"><div class="card"><div class="confirm-hero">' +
+        '<div class="confirm-icon">✅</div>' +
+        '<div class="confirm-title">Request Sent!</div>' +
+        '<div class="confirm-sub">Your ' + (isInk?'ink':'paper') + ' request has been sent to IT.<br><br>' +
+        '<strong>'+state.firstName+' '+state.lastName+'</strong><br>' +
+        state.department + ' — PC: ' + state.pcNumber +
+        (state.urgency==='urgent'?'<br><br><strong style="color:var(--urgent)">🔴 Marked as URGENT</strong>':'') +
+        '</div></div></div>' +
+      '<button class="btn btn-primary" id="newBtn">Start New Request</button></div>';
+    document.getElementById('newBtn').onclick = () => { state={step:'welcome',pcNumber:'',firstName:'',lastName:'',department:'',need:'',urgency:'',tonerLevel:'',front:null,back:null,details:null,error:''}; render(); };
+    return;
+  }
 }
 
 render();
