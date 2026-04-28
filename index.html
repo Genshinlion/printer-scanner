@@ -13,6 +13,7 @@
     --border: rgba(0,0,0,0.1); --red-bg: #FCEBEB; --red-border: #F7C1C1; --red-text: #A32D2D;
     --green: #34a853; --green-light: #e6f9ee; --green-border: #9fe3be;
     --blue: #1a73e8; --blue-light: #e8f0fe; --blue-border: #b6cef7;
+    --purple: #7c3aed; --purple-light: #ede9fe; --purple-border: #c4b5fd;
     --urgent: #d93025; --urgent-light: #fce8e6; --urgent-border: #f5c6c3;
   }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 40px; }
@@ -39,40 +40,48 @@
   input[type="text"] { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1.5px solid var(--border); background: #f9f8f5; color: var(--text); font-size: 15px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; margin-bottom: 14px; }
   input[type="text"]:focus { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(239,159,39,0.18); }
   input[type="file"] { display: none; }
-
-  /* Need buttons */
-  .need-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
-  .need-btn { padding: 24px 10px; border-radius: 16px; border: 2px solid var(--border); background: #f9f8f5; cursor: pointer; text-align: center; transition: all 0.2s; }
-  .need-btn:active { transform: scale(0.97); }
-  .need-btn-icon { font-size: 36px; display: block; margin-bottom: 8px; }
-  .need-btn-label { font-size: 15px; font-weight: 700; color: var(--text); display: block; }
-  .need-btn-sub { font-size: 12px; color: var(--text-muted); display: block; margin-top: 3px; }
-  .need-btn.ink { border-color: var(--amber); background: var(--amber-light); }
-  .need-btn.paper { border-color: var(--green); background: var(--green-light); }
-
-  /* Urgency toggle */
+  .request-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .req-btn { padding: 20px 12px; border-radius: 16px; border: 2px solid var(--border); background: #f9f8f5; cursor: pointer; text-align: center; transition: all 0.2s; }
+  .req-btn:active { transform: scale(0.97); }
+  .req-btn-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+  .req-btn-label { font-size: 14px; font-weight: 700; color: var(--text); display: block; }
+  .req-btn-sub { font-size: 11px; color: var(--text-muted); display: block; margin-top: 3px; line-height: 1.4; }
+  .req-btn.ink   { border-color: var(--amber);  background: var(--amber-light);  }
+  .req-btn.paper { border-color: var(--green);  background: var(--green-light);  }
+  .req-btn.newpr { border-color: var(--blue);   background: var(--blue-light);   }
+  .req-btn.cable { border-color: var(--purple); background: var(--purple-light); }
   .urgency-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
   .urgency-btn { padding: 16px 10px; border-radius: 14px; border: 2px solid var(--border); background: #f9f8f5; cursor: pointer; text-align: center; transition: all 0.2s; }
-  .urgency-btn:active { transform: scale(0.97); }
-  .urgency-btn.selected-normal { border-color: var(--green); background: var(--green-light); }
+  .urgency-btn.selected-normal { border-color: var(--green);  background: var(--green-light); }
   .urgency-btn.selected-urgent { border-color: var(--urgent); background: var(--urgent-light); }
-  .urgency-icon { font-size: 26px; display: block; margin-bottom: 6px; }
+  .urgency-icon  { font-size: 26px; display: block; margin-bottom: 6px; }
   .urgency-label { font-size: 14px; font-weight: 700; display: block; }
-  .urgency-sub { font-size: 11px; color: var(--text-muted); display: block; margin-top: 2px; }
+  .urgency-sub   { font-size: 11px; color: var(--text-muted); display: block; margin-top: 2px; }
+  .yesno-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+  .yesno-btn { padding: 22px 10px; border-radius: 14px; border: 2px solid var(--border); background: #f9f8f5; cursor: pointer; text-align: center; transition: all 0.2s; font-size: 18px; font-weight: 700; }
+  .yesno-btn:active { transform: scale(0.97); }
+  .yesno-btn.yes { border-color: var(--green);  background: var(--green-light); color: #1a5c33; }
+  .yesno-btn.no  { border-color: var(--red-border); background: var(--red-bg);  color: var(--red-text); }
+  .os-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+  .os-btn { padding: 20px 10px; border-radius: 14px; border: 2px solid var(--border); background: #f9f8f5; cursor: pointer; text-align: center; transition: all 0.2s; }
+  .os-btn:active { transform: scale(0.97); }
+  .os-btn.selected { border-color: var(--blue); background: var(--blue-light); }
+  .os-icon  { font-size: 30px; display: block; margin-bottom: 6px; }
+  .os-label { font-size: 14px; font-weight: 700; display: block; }
 
-  /* Toner level */
-  .toner-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
-  .toner-btn { padding: 14px 6px; border-radius: 12px; border: 2px solid var(--border); background: #f9f8f5; cursor: pointer; text-align: center; transition: all 0.2s; }
-  .toner-btn:active { transform: scale(0.97); }
-  .toner-btn.selected { border-color: var(--amber); background: var(--amber-light); }
-  .toner-icon { font-size: 20px; display: block; margin-bottom: 4px; }
-  .toner-label { font-size: 11px; font-weight: 700; display: block; color: var(--text); }
-
-  /* Photo */
-  .photo-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-  .photo-option-btn { padding: 18px 10px; border-radius: 14px; border: 2px dashed var(--border); background: #f9f8f5; cursor: pointer; text-align: center; transition: border-color 0.2s, background 0.2s; font-size: 13px; font-weight: 600; color: var(--text); }
-  .photo-option-btn:active { background: var(--amber-light); border-color: var(--amber); }
-  .photo-option-icon { font-size: 28px; display: block; margin-bottom: 6px; }
+  /* ── Live camera ── */
+  .camera-wrap { position: relative; width: 100%; border-radius: 14px; overflow: hidden; background: #111; margin-bottom: 12px; min-height: 220px; }
+  .camera-video { width: 100%; display: block; border-radius: 14px; max-height: 300px; object-fit: cover; }
+  .camera-overlay { position: absolute; inset: 0; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .camera-label { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.65); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 20px; white-space: nowrap; letter-spacing: 0.04em; }
+  .camera-box { width: 82%; height: 58%; border: 2.5px solid rgba(255,255,255,0.85); border-radius: 12px; box-shadow: 0 0 0 2000px rgba(0,0,0,0.38); position: relative; transition: border-color 0.3s; }
+  .camera-box.good { border-color: #34a853; }
+  .camera-hint { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.72); color: #fff; font-size: 13px; font-weight: 600; padding: 7px 18px; border-radius: 20px; white-space: nowrap; transition: background 0.3s; }
+  .camera-hint.good { background: rgba(52,168,83,0.9); }
+  .camera-hint.warn { background: rgba(239,120,39,0.95); }
+  .camera-capture { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 15px; border-radius: 14px; background: var(--amber); color: #412402; font-size: 16px; font-weight: 700; border: none; cursor: pointer; margin-bottom: 8px; transition: opacity 0.2s; }
+  .camera-capture:disabled { opacity: 0.35; cursor: not-allowed; }
+  .camera-gallery-link { font-size: 13px; color: var(--amber-dark); background: none; border: none; cursor: pointer; text-decoration: underline; display: block; text-align: center; margin-bottom: 10px; }
   .photo-preview-wrap { position: relative; border-radius: 14px; overflow: hidden; margin-bottom: 8px; }
   .photo-preview-wrap img { width: 100%; display: block; max-height: 240px; object-fit: cover; border-radius: 14px; border: 2px solid var(--amber); }
   .photo-preview-label { position: absolute; top: 8px; left: 8px; background: var(--amber); color: #412402; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
@@ -83,15 +92,11 @@
   .saved-info { flex: 1; }
   .saved-title { font-size: 13px; font-weight: 600; color: var(--amber-dark); }
   .saved-retake { font-size: 12px; color: var(--amber-dark); background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; margin-top: 2px; display: block; }
-
-  /* Analysing */
   .analyzing-wrap { text-align: center; padding: 50px 20px; }
   .spinner { width: 50px; height: 50px; border: 4px solid #eee; border-top-color: var(--amber); border-radius: 50%; animation: spin 0.75s linear infinite; margin: 0 auto 20px; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .analyzing-title { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
-  .analyzing-sub { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
-
-  /* Results */
+  .analyzing-sub { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
   .thumb-row { display: flex; gap: 10px; margin-bottom: 14px; }
   .thumb-box { flex: 1; position: relative; border-radius: 12px; overflow: hidden; height: 90px; }
   .thumb-box img { width: 100%; height: 100%; object-fit: cover; }
@@ -101,22 +106,13 @@
   .detail-cell.full { grid-column: 1 / -1; }
   .dc-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
   .dc-value { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; }
-  .ink-badge { display: inline-block; background: var(--amber-light); color: #633806; padding: 6px 14px; border-radius: 20px; font-size: 15px; font-weight: 700; border: 1px solid var(--amber-border); margin-top: 4px; }
-  .rec-box { background: var(--blue-light); border: 1px solid var(--blue-border); border-radius: 12px; padding: 14px; margin-top: 10px; }
-  .rec-label { font-size: 11px; font-weight: 700; color: #1a3c8f; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
-  .rec-text { font-size: 13px; color: #1a3c8f; line-height: 1.6; }
-  .urgent-badge { display: inline-block; background: var(--urgent-light); color: var(--urgent); border: 1px solid var(--urgent-border); border-radius: 20px; font-size: 12px; font-weight: 700; padding: 3px 12px; margin-left: 8px; vertical-align: middle; }
-  .normal-badge { display: inline-block; background: var(--green-light); color: #1a5c33; border: 1px solid var(--green-border); border-radius: 20px; font-size: 12px; font-weight: 700; padding: 3px 12px; margin-left: 8px; vertical-align: middle; }
-  .notes-text { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+  .urgent-badge { display: inline-block; background: var(--urgent-light); color: var(--urgent); border: 1px solid var(--urgent-border); border-radius: 20px; font-size: 12px; font-weight: 700; padding: 3px 12px; margin-left: 8px; }
+  .normal-badge  { display: inline-block; background: var(--green-light); color: #1a5c33; border: 1px solid var(--green-border); border-radius: 20px; font-size: 12px; font-weight: 700; padding: 3px 12px; margin-left: 8px; }
   .error-box { background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 12px; padding: 14px 16px; color: var(--red-text); font-size: 14px; margin-bottom: 14px; line-height: 1.5; }
-
-  /* Confirmation */
   .confirm-hero { text-align: center; padding: 40px 20px 20px; }
   .confirm-icon { font-size: 64px; margin-bottom: 16px; }
   .confirm-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
   .confirm-sub { font-size: 15px; color: var(--text-muted); line-height: 1.6; }
-
-  /* Welcome */
   .welcome-hero { text-align: center; padding: 30px 0 20px; }
   .welcome-emoji { font-size: 56px; margin-bottom: 14px; }
   .welcome-title { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
@@ -133,411 +129,633 @@
 <body>
 <div id="app"></div>
 <script>
-// ── Load saved user info from localStorage ────────────────────────────────
-try {
-  const saved = JSON.parse(localStorage.getItem('pcg_user_info') || '{}');
-  if (saved.pcNumber)  state.pcNumber  = saved.pcNumber;
-  if (saved.firstName) state.firstName = saved.firstName;
-  if (saved.lastName)  state.lastName  = saved.lastName;
-  if (saved.department)state.department= saved.department;
-} catch(e) {}
+// ── Gallery file inputs (fallback) ─────────────────────────────────────────
+var gFront = document.createElement('input');
+var gBack  = document.createElement('input');
+gFront.type = gBack.type = 'file';
+gFront.accept = gBack.accept = 'image/*';
+document.body.appendChild(gFront);
+document.body.appendChild(gBack);
+gFront.onchange = function(e){ handleGallery(e,'front'); };
+gBack.onchange  = function(e){ handleGallery(e,'back');  };
 
-// ── CONFIG — paste your Google Apps Script URL below ──────────────────────
-window.SHEET_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
-// ──────────────────────────────────────────────────────────────────────────
+// ── Config ─────────────────────────────────────────────────────────────────
+var SHEET_URL = 'PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
 
-const inputCameraFront  = document.createElement('input');
-const inputGalleryFront = document.createElement('input');
-const inputCameraBack   = document.createElement('input');
-const inputGalleryBack  = document.createElement('input');
-[inputCameraFront, inputGalleryFront, inputCameraBack, inputGalleryBack].forEach(el => {
-  el.type = 'file'; el.accept = 'image/*'; document.body.appendChild(el);
-});
-inputCameraFront.setAttribute('capture', 'environment');
-inputCameraBack.setAttribute('capture',  'environment');
-inputCameraFront.onchange  = e => handlePhoto(e, 'front');
-inputGalleryFront.onchange = e => handlePhoto(e, 'front');
-inputCameraBack.onchange   = e => handlePhoto(e, 'back');
-inputGalleryBack.onchange  = e => handlePhoto(e, 'back');
-
-const TONER_LEVELS = [
-  { key: 'empty', icon: '🔴', label: 'Empty' },
-  { key: 'low',   icon: '🟠', label: 'Low'   },
-  { key: 'half',  icon: '🟡', label: 'Half'  },
-  { key: 'full',  icon: '🟢', label: 'Full'  }
-];
-
-let state = {
-  step: 'welcome',
-  pcNumber: '', firstName: '', lastName: '', department: '',
-  need: '', urgency: '', tonerLevel: '',
-  front: null, back: null, details: null, error: ''
+// ── State ──────────────────────────────────────────────────────────────────
+var state = {
+  step:'welcome', pcNumber:'', firstName:'', lastName:'', department:'',
+  need:'', urgency:'', forStore:'', location:'', os:'', cableNeeded:'',
+  front:null, back:null, details:null, error:''
 };
 
-function toB64(file) {
-  return new Promise((res, rej) => {
-    const img = new Image();
-    const blobUrl = URL.createObjectURL(file);
-    img.onload = () => {
-      const MAX = 1280; let w = img.width, h = img.height;
-      if (w > MAX || h > MAX) { if (w > h) { h = Math.round(h*MAX/w); w = MAX; } else { w = Math.round(w*MAX/h); h = MAX; } }
-      const canvas = document.createElement('canvas');
+// Load saved user info
+try {
+  var saved = JSON.parse(localStorage.getItem('pcg_user_info') || '{}');
+  if (saved.pcNumber)   state.pcNumber   = saved.pcNumber;
+  if (saved.firstName)  state.firstName  = saved.firstName;
+  if (saved.lastName)   state.lastName   = saved.lastName;
+  if (saved.department) state.department = saved.department;
+} catch(ex) {}
+
+function saveUserInfo() {
+  try {
+    localStorage.setItem('pcg_user_info', JSON.stringify({
+      pcNumber:state.pcNumber, firstName:state.firstName,
+      lastName:state.lastName, department:state.department
+    }));
+  } catch(ex) {}
+}
+
+function resetState() {
+  state = {
+    step:'welcome', pcNumber:state.pcNumber, firstName:state.firstName,
+    lastName:state.lastName, department:state.department,
+    need:'', urgency:'', forStore:'', location:'', os:'', cableNeeded:'',
+    front:null, back:null, details:null, error:''
+  };
+}
+
+// ── Image helpers ──────────────────────────────────────────────────────────
+function resizeAndEncode(blob) {
+  return new Promise(function(res, rej) {
+    var img = new Image();
+    var blobUrl = URL.createObjectURL(blob);
+    img.onload = function() {
+      var MAX = 1280, w = img.width, h = img.height;
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+        else       { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      var canvas = document.createElement('canvas');
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
       URL.revokeObjectURL(blobUrl);
-      res(canvas.toDataURL('image/jpeg', 0.85).split(',')[1]);
+      var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      res({ b64: dataUrl.split(',')[1], url: dataUrl });
     };
-    img.onerror = rej; img.src = blobUrl;
+    img.onerror = rej;
+    img.src = blobUrl;
   });
 }
 
-async function handlePhoto(e, side) {
-  const file = e.target.files[0]; if (!file) return;
-  const b64 = await toB64(file);
-  const url  = URL.createObjectURL(file);
-  if (side === 'front') state.front = { b64, url };
-  else                  state.back  = { b64, url };
-  e.target.value = ''; render();
+function handleGallery(e, side) {
+  var file = e.target.files[0];
+  if (!file) return;
+  resizeAndEncode(file).then(function(result) {
+    if (side === 'front') state.front = result;
+    else                  state.back  = result;
+    e.target.value = '';
+    stopCamera();
+    render();
+  });
 }
 
-async function analyze() {
-  state.step = 'analyzing'; state.error = ''; render();
-  try {
-    let resp;
-    try {
-      resp = await fetch('/.netlify/functions/analyze', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ frontB64: state.front.b64, backB64: state.back.b64 })
-      });
-    } catch (netErr) { throw new Error('Cannot reach the server. Check your internet connection.'); }
-    const rawText = await resp.text();
-    if (!resp.ok) {
-      let msg = rawText; try { msg = JSON.parse(rawText).error || rawText; } catch(e) {}
-      throw new Error('Error ' + resp.status + ': ' + msg);
+// ── Camera ─────────────────────────────────────────────────────────────────
+var camStream = null;
+var camInterval = null;
+var camSide = null;
+var camReady = false;
+
+function stopCamera() {
+  if (camStream) { camStream.getTracks().forEach(function(t){ t.stop(); }); camStream = null; }
+  if (camInterval) { clearInterval(camInterval); camInterval = null; }
+  camReady = false;
+}
+
+function startCamera(side) {
+  stopCamera();
+  camSide = side;
+  camReady = false;
+  var video = document.getElementById('camVideo');
+  var hint  = document.getElementById('camHint');
+  var box   = document.getElementById('camBox');
+  var capBtn = document.getElementById('capBtn');
+  if (!video) return;
+
+  navigator.mediaDevices.getUserMedia({
+    video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }
+  }).then(function(stream) {
+    camStream = stream;
+    video.srcObject = stream;
+    video.play();
+
+    var frameCount = 0, goodCount = 0;
+
+    camInterval = setInterval(function() {
+      if (!video.videoWidth) return;
+      var canvas = document.createElement('canvas');
+      canvas.width = 80; canvas.height = 45;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, 80, 45);
+      var data = ctx.getImageData(0, 0, 80, 45).data;
+      var total = 0;
+      for (var i = 0; i < data.length; i += 4) total += (data[i] + data[i+1] + data[i+2]) / 3;
+      var avg = total / (data.length / 4);
+      frameCount++;
+
+      if (!hint || !box || !capBtn) return;
+
+      if (avg < 25) {
+        hint.textContent = '🔦 Too dark — find better lighting';
+        hint.className = 'camera-hint warn';
+        box.className = 'camera-box';
+        capBtn.disabled = true;
+        goodCount = 0;
+      } else if (avg > 230) {
+        hint.textContent = '☀️ Too bright — reduce glare';
+        hint.className = 'camera-hint warn';
+        box.className = 'camera-box';
+        capBtn.disabled = true;
+        goodCount = 0;
+      } else if (frameCount < 6) {
+        hint.textContent = '⏳ Steadying camera…';
+        hint.className = 'camera-hint';
+        box.className = 'camera-box';
+        capBtn.disabled = true;
+      } else if (avg < 60) {
+        hint.textContent = '📏 Move closer to the printer';
+        hint.className = 'camera-hint warn';
+        box.className = 'camera-box';
+        capBtn.disabled = true;
+        goodCount = 0;
+      } else if (avg > 190) {
+        hint.textContent = '↔️ Move back a little';
+        hint.className = 'camera-hint warn';
+        box.className = 'camera-box';
+        capBtn.disabled = true;
+        goodCount = 0;
+      } else {
+        goodCount++;
+        if (goodCount >= 4) {
+          hint.textContent = '✅ Looking good — tap Capture!';
+          hint.className = 'camera-hint good';
+          box.className = 'camera-box good';
+          capBtn.disabled = false;
+          camReady = true;
+        } else {
+          hint.textContent = '🔍 Hold steady…';
+          hint.className = 'camera-hint';
+          box.className = 'camera-box';
+          capBtn.disabled = true;
+        }
+      }
+    }, 300);
+
+  }).catch(function(err) {
+    if (hint) {
+      hint.textContent = '⚠️ Camera unavailable';
+      hint.className = 'camera-hint warn';
     }
-    state.details = JSON.parse(rawText.replace(/```json|```/g,'').trim());
-    state.step = 'results';
-  } catch (err) { state.error = err.message; state.step = 'back'; }
+    console.warn('Camera error:', err);
+  });
+}
+
+function capturePhoto() {
+  var video = document.getElementById('camVideo');
+  if (!video || !video.videoWidth) return;
+  var canvas = document.createElement('canvas');
+  canvas.width  = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+  var result  = { b64: dataUrl.split(',')[1], url: dataUrl };
+  stopCamera();
+  if (camSide === 'front') state.front = result;
+  else                     state.back  = result;
   render();
 }
 
+// ── Analysis ───────────────────────────────────────────────────────────────
+function analyze() {
+  state.step = 'analyzing'; state.error = ''; render();
+  fetch('/.netlify/functions/analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ frontB64: state.front.b64, backB64: state.back.b64 })
+  }).then(function(resp) {
+    return resp.text().then(function(txt) { return { ok: resp.ok, status: resp.status, txt: txt }; });
+  }).then(function(r) {
+    if (!r.ok) {
+      var msg = r.txt;
+      try { msg = JSON.parse(r.txt).error || r.txt; } catch(ex) {}
+      throw new Error('Error ' + r.status + ': ' + msg);
+    }
+    state.details = JSON.parse(r.txt);
+    state.step = 'results';
+    render();
+  }).catch(function(err) {
+    state.error = err.message;
+    state.step  = 'back';
+    render();
+  });
+}
+
+// ── Sheet logging ──────────────────────────────────────────────────────────
+function logToSheet(extra) {
+  if (!SHEET_URL || SHEET_URL.indexOf('PASTE') !== -1) return;
+  var payload = {
+    name: state.firstName + ' ' + state.lastName,
+    department: state.department, pcNumber: state.pcNumber,
+    requestType: state.need, urgency: state.urgency || 'Normal'
+  };
+  Object.keys(extra).forEach(function(k){ payload[k] = extra[k]; });
+  fetch(SHEET_URL, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(function(e){ console.warn('Sheet log failed:', e.message); });
+}
+
+// ── B64 to Blob ────────────────────────────────────────────────────────────
 function b64ToBlob(b64) {
-  const bytes = atob(b64); const arr = new Uint8Array(bytes.length);
-  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+  var bytes = atob(b64), arr = new Uint8Array(bytes.length);
+  for (var i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
   return new Blob([arr], { type: 'image/jpeg' });
 }
 
-async function logToSheet(details) {
-  const sheetUrl = window.SHEET_URL;
-  if (!sheetUrl) return;
-  try {
-    await fetch(sheetUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name:              state.firstName + ' ' + state.lastName,
-        department:        state.department,
-        pcNumber:          state.pcNumber,
-        requestType:       state.need === 'ink' ? 'Ink / Toner' : 'Paper',
-        urgency:           state.urgency === 'urgent' ? 'Urgent' : 'Normal',
-        brand:             details ? details.brand             : '',
-        model:             details ? details.model             : '',
-        modelNumber:       details ? details.model_number      : '',
-        serialNumber:      details ? details.serial_number     : '',
-        inkType:           details ? details.ink_type          : '',
-        cartridgeNumbers:  details ? details.ink_cartridge_numbers : '',
-        tonerLevel:        state.tonerLevel ? state.tonerLevel.charAt(0).toUpperCase() + state.tonerLevel.slice(1) : '',
-        inkRecommendation: details ? (details.ink_recommendation || '') : '',
-        conditionNotes:    details ? (details.condition_notes    || '') : ''
-      })
-    });
-  } catch(e) {
-    console.warn('Sheet logging failed (non-critical):', e.message);
-  }
-}
+// ── Email ──────────────────────────────────────────────────────────────────
+function sendEmail() {
+  var name    = state.firstName + ' ' + state.lastName;
+  var isUrgent = state.urgency === 'urgent';
+  var urgency = isUrgent ? '🔴 URGENT' : '🟢 Normal';
+  var subject = '', lines = [];
 
-async function sendEmail() {
-  const d = state.details;
-  const name    = state.firstName + ' ' + state.lastName;
-  const isInk   = state.need === 'ink';
-  const urgency = state.urgency === 'urgent' ? '🔴 URGENT' : '🟢 Normal';
-  const subject = (state.urgency === 'urgent' ? '🔴 URGENT — ' : '') +
-                  (isInk ? 'Ink Request' : 'Paper Request') +
-                  ' — ' + name + ' (' + state.department + ', PC: ' + state.pcNumber + ')';
-
-  const lines = [
-    (isInk ? 'INK REQUEST' : 'PAPER REQUEST'),
-    '====================',
-    'Priority:   ' + urgency,
-    '',
-    'SUBMITTED BY',
-    'Name:       ' + name,
-    'Department: ' + state.department,
-    'PC Number:  ' + state.pcNumber,
-    ''
-  ];
-
-  if (isInk && d) {
-    lines.push(
+  if (state.need === 'ink') {
+    var d = state.details;
+    subject = (isUrgent ? '🔴 URGENT — ' : '') + 'Ink Request — ' + name + ' (' + state.department + ', PC: ' + state.pcNumber + ')';
+    lines = [
+      'INK REQUEST', '====================',
+      'Priority:   ' + urgency, '',
+      'SUBMITTED BY',
+      'Name:       ' + name, 'Department: ' + state.department, 'PC Number:  ' + state.pcNumber, '',
       'PRINTER DETAILS',
-      'Brand:        ' + d.brand,
-      'Model:        ' + d.model,
-      'Model No:     ' + (d.model_number || '—'),
-      'Manufacturer: ' + d.manufacturer,
-      'Serial No:    ' + (d.serial_number || 'Not visible'),
-      'Toner Level:  ' + (state.tonerLevel ? state.tonerLevel.charAt(0).toUpperCase() + state.tonerLevel.slice(1) : '—'),
+      'Brand:     ' + (d ? d.brand            : ''),
+      'Model:     ' + (d ? d.model            : ''),
+      'Model No:  ' + (d ? d.model_number||'—': ''),
+      'Serial No: ' + (d ? d.serial_number||'Not visible on label' : ''),
+      'Type:      ' + (d ? d.printer_type||'—': ''),
       '',
-      'INK / TONER TO ORDER',
-      '====================',
-      'Ink Type:     ' + d.ink_type,
-      'Cartridge No: ' + d.ink_cartridge_numbers,
-      '',
-      'AI ORDERING RECOMMENDATION',
-      '==========================',
-      d.ink_recommendation || 'See cartridge number above.',
-      ''
-    );
-    if (d.condition_notes) lines.push('CONDITION: ' + d.condition_notes, '');
-  } else {
-    lines.push('REQUEST: Paper restock needed.');
+      (d && d.condition_notes ? 'CONDITION: ' + d.condition_notes : ''),
+      '— Sent from Printer Scanner App'
+    ];
+    logToSheet({ brand: d&&d.brand, model: d&&d.model, modelNumber: d&&d.model_number, serialNumber: d&&d.serial_number });
+
+  } else if (state.need === 'paper') {
+    subject = (isUrgent ? '🔴 URGENT — ' : '') + 'Paper Request — ' + name + ' (' + state.department + ', PC: ' + state.pcNumber + ')';
+    lines = [
+      'PAPER REQUEST', '====================',
+      'Priority:   ' + urgency, '',
+      'SUBMITTED BY',
+      'Name:       ' + name, 'Department: ' + state.department, 'PC Number:  ' + state.pcNumber, '',
+      'REQUEST: Paper restock needed.',
+      '— Sent from Printer Scanner App'
+    ];
+    logToSheet({});
+
+  } else if (state.need === 'newprinter') {
+    subject = (isUrgent ? '🔴 URGENT — ' : '') + 'New Printer Request — ' + name + ' (' + state.department + ', PC: ' + state.pcNumber + ')';
+    lines = [
+      'NEW PRINTER REQUEST', '====================',
+      'Priority:    ' + urgency, '',
+      'SUBMITTED BY',
+      'Name:        ' + name, 'Department:  ' + state.department, 'PC Number:   ' + state.pcNumber, '',
+      'PRINTER DETAILS',
+      'For the store:   ' + (state.forStore === 'yes' ? 'Yes' : 'No'),
+      'Location:        ' + state.location,
+      'Computer type:   ' + state.os,
+      '— Sent from Printer Scanner App'
+    ];
+    logToSheet({ location: state.location, os: state.os, forStore: state.forStore });
+
+  } else if (state.need === 'cable') {
+    subject = 'Printer Cable Request — ' + name + ' (' + state.department + ', PC: ' + state.pcNumber + ')';
+    lines = [
+      'PRINTER CABLE REQUEST', '====================',
+      'SUBMITTED BY',
+      'Name:       ' + name, 'Department: ' + state.department, 'PC Number:  ' + state.pcNumber, '',
+      'REQUEST: Printer cable needed.',
+      '— Sent from Printer Scanner App'
+    ];
+    logToSheet({});
   }
-  lines.push('— Sent from Printer Scanner App');
-  const body = lines.join('\n');
 
-  // Log to Google Sheet silently in background
-  logToSheet(state.need === 'ink' ? d : null);
+  var body = lines.filter(function(l){ return l !== undefined; }).join('\n');
 
-  if (navigator.share && navigator.canShare) {
+  var tryShare = function() {
+    if (!navigator.share || !navigator.canShare) return false;
     try {
-      const files = [];
-      if (isInk && state.front && state.front.b64) files.push(new File([b64ToBlob(state.front.b64)], 'printer-front.jpg', { type: 'image/jpeg' }));
-      if (isInk && state.back  && state.back.b64)  files.push(new File([b64ToBlob(state.back.b64)],  'printer-top.jpg',   { type: 'image/jpeg' }));
-      if (files.length && navigator.canShare({ files })) { await navigator.share({ title: subject, text: body, files }); state.step = 'confirm'; render(); return; }
-    } catch(e) { if (e.name !== 'AbortError') console.warn('Share failed:', e); }
-  }
-  window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-  setTimeout(() => { state.step = 'confirm'; render(); }, 1500);
+      var files = [];
+      if (state.need === 'ink' && state.front && state.front.b64) files.push(new File([b64ToBlob(state.front.b64)], 'printer-front.jpg', { type: 'image/jpeg' }));
+      if (state.need === 'ink' && state.back  && state.back.b64)  files.push(new File([b64ToBlob(state.back.b64)],  'printer-top.jpg',   { type: 'image/jpeg' }));
+      if (files.length && navigator.canShare({ files: files })) {
+        navigator.share({ title: subject, text: body, files: files }).then(function() {
+          state.step = 'confirm'; render();
+        }).catch(function(e){ if (e.name !== 'AbortError') fallbackEmail(subject, body); });
+        return true;
+      }
+    } catch(e) {}
+    return false;
+  };
+
+  if (!tryShare()) { fallbackEmail(subject, body); }
 }
 
+function fallbackEmail(subject, body) {
+  window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  setTimeout(function() { state.step = 'confirm'; render(); }, 1500);
+}
+
+// ── UI Helpers ─────────────────────────────────────────────────────────────
 function topbar(subtitle) {
   return '<div class="topbar"><span class="topbar-icon">🖨️</span><div><div class="topbar-title">Printer Scanner</div>' + (subtitle ? '<div class="topbar-sub">' + subtitle + '</div>' : '') + '</div></div>';
 }
 
-const STEPS = ['info','need','details','front','back','analyzing','results'];
-function progressBar(current) {
-  const idx = STEPS.indexOf(current);
+function progressBar(steps, current) {
+  var idx = steps.indexOf(current);
   return '<div class="progress-wrap"><div class="progress-steps">' +
-    STEPS.map((_,i) => '<div class="ps ' + (i<idx?'done':i===idx?'active':'') + '"></div>').join('') +
-    '</div><div class="progress-label">Step ' + (idx+1) + ' of ' + STEPS.length + '</div></div>';
+    steps.map(function(_,i){ return '<div class="ps ' + (i<idx?'done':i===idx?'active':'') + '"></div>'; }).join('') +
+    '</div><div class="progress-label">Step ' + (idx+1) + ' of ' + steps.length + '</div></div>';
 }
 
-function photoUI(side, photo) {
-  const cam = side==='front'?'inputCameraFront':'inputCameraBack';
-  const gal = side==='front'?'inputGalleryFront':'inputGalleryBack';
-  if (photo) return '<div class="photo-preview-wrap"><img src="'+photo.url+'" alt="'+side+'"><div class="photo-preview-label">✓ '+side.toUpperCase()+'</div></div><div class="retake-row"><button class="retake-btn" onclick="'+cam+'.click()">📷 Camera</button><button class="retake-btn" onclick="'+gal+'.click()">🖼️ Gallery</button></div>';
-  return '<div class="photo-options"><div class="photo-option-btn" onclick="'+cam+'.click()"><span class="photo-option-icon">📷</span>Open Camera</div><div class="photo-option-btn" onclick="'+gal+'.click()"><span class="photo-option-icon">🖼️</span>Gallery / Files</div></div><p style="font-size:12px;color:#999;text-align:center;margin-top:4px;">If camera does not open, tap Gallery and choose a photo</p>';
+function cameraBlock(side, label) {
+  var photo = side === 'front' ? state.front : state.back;
+  if (photo) {
+    return '<div class="photo-preview-wrap"><img src="' + photo.url + '" alt="' + side + '"><div class="photo-preview-label">✓ ' + side.toUpperCase() + '</div></div>' +
+      '<div class="retake-row">' +
+        '<button class="retake-btn" id="retakeCam">📷 Retake</button>' +
+        '<button class="retake-btn" id="retakeGal">🖼️ Gallery</button>' +
+      '</div>';
+  }
+  return '<div class="camera-wrap" id="camWrap">' +
+      '<video id="camVideo" playsinline muted class="camera-video"></video>' +
+      '<div class="camera-overlay">' +
+        '<div class="camera-label">' + label + '</div>' +
+        '<div class="camera-box" id="camBox"></div>' +
+        '<div class="camera-hint" id="camHint">⏳ Starting camera…</div>' +
+      '</div>' +
+    '</div>' +
+    '<button class="camera-capture" id="capBtn" disabled>📸 Capture Photo</button>' +
+    '<button class="camera-gallery-link" id="galLink">Camera not working? Pick from gallery</button>';
 }
 
+function wireCameraBlock(side) {
+  var photo = side === 'front' ? state.front : state.back;
+  var gl = document.getElementById('galLink');
+  var cb = document.getElementById('capBtn');
+  var rc = document.getElementById('retakeCam');
+  var rg = document.getElementById('retakeGal');
+
+  if (photo) {
+    if (rc) rc.onclick = function() { if (side==='front') state.front=null; else state.back=null; render(); };
+    if (rg) rg.onclick = function() { if (side==='front') gFront.click(); else gBack.click(); };
+  } else {
+    if (gl) gl.onclick = function() { stopCamera(); if (side==='front') gFront.click(); else gBack.click(); };
+    if (cb) cb.onclick = function() { capturePhoto(); };
+    setTimeout(function(){ startCamera(side); }, 80);
+  }
+}
+
+function urgencyCard() {
+  return '<div class="card"><div class="card-label">⚡ Priority</div>' +
+    '<div class="urgency-row">' +
+      '<div class="urgency-btn ' + (state.urgency==='normal'?'selected-normal':'') + '" id="btnNormal"><span class="urgency-icon">🟢</span><span class="urgency-label">Normal</span><span class="urgency-sub">Order when possible</span></div>' +
+      '<div class="urgency-btn ' + (state.urgency==='urgent'?'selected-urgent':'') + '" id="btnUrgent"><span class="urgency-icon">🔴</span><span class="urgency-label">Urgent</span><span class="urgency-sub">Need it ASAP</span></div>' +
+    '</div></div>';
+}
+
+function wireUrgency(onChange) {
+  var bn = document.getElementById('btnNormal');
+  var bu = document.getElementById('btnUrgent');
+  if (bn) bn.onclick = function(){ state.urgency='normal'; if(onChange)onChange(); else render(); };
+  if (bu) bu.onclick = function(){ state.urgency='urgent'; if(onChange)onChange(); else render(); };
+}
+
+// ── Render ─────────────────────────────────────────────────────────────────
 function render() {
-  const app = document.getElementById('app');
+  var app = document.getElementById('app');
 
   // ── Welcome ──
   if (state.step === 'welcome') {
     app.innerHTML = topbar(null) +
-      '<div class="content"><div class="welcome-hero"><div class="welcome-emoji">🖨️</div><div class="welcome-title">Printer Scanner</div><div class="welcome-sub">Quick supply requests — ink or paper — sent straight to IT.</div></div>' +
-      '<div class="card"><div class="card-label">How it works</div><div class="steps-list">' +
-        '<div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>Enter your details</strong> — name, department &amp; PC number</div></div>' +
-        '<div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>Choose what you need</strong> — ink or paper</div></div>' +
-        '<div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>Set urgency &amp; toner level</strong> — so IT can prioritise</div></div>' +
-        '<div class="step-item"><div class="step-num">4</div><div class="step-text"><strong>Take 2 photos</strong> — AI identifies exact cartridges</div></div>' +
-        '<div class="step-item"><div class="step-num">5</div><div class="step-text"><strong>Send report + photos</strong> — emailed to IT instantly</div></div>' +
+      '<div class="content"><div class="welcome-hero"><div class="welcome-emoji">🖨️</div><div class="welcome-title">Printer Scanner</div><div class="welcome-sub">Supply requests sent straight to IT — fast and easy.</div></div>' +
+      '<div class="card"><div class="card-label">What can you request?</div><div class="steps-list">' +
+        '<div class="step-item"><div class="step-num">🖨️</div><div class="step-text"><strong>Ink / Toner</strong> — scan your printer, captures exact model</div></div>' +
+        '<div class="step-item"><div class="step-num">📄</div><div class="step-text"><strong>Paper</strong> — quick restock request</div></div>' +
+        '<div class="step-item"><div class="step-num">🆕</div><div class="step-text"><strong>New Printer</strong> — request a brand new printer</div></div>' +
+        '<div class="step-item"><div class="step-num">🔌</div><div class="step-text"><strong>Printer Cable</strong> — simple yes/no request</div></div>' +
       '</div></div>' +
       '<button class="btn btn-primary" id="startBtn">Get Started →</button></div>';
-    document.getElementById('startBtn').onclick = () => { state.step = 'info'; render(); };
+    document.getElementById('startBtn').onclick = function(){ stopCamera(); state.step='info'; render(); };
     return;
   }
 
   // ── Info ──
   if (state.step === 'info') {
-    app.innerHTML = topbar('Your details') + progressBar('info') +
+    app.innerHTML = topbar('Your details') + progressBar(['info','need'],'info') +
       '<div class="content"><div class="card"><div class="card-label">📋 Your details</div>' +
-        '<label class="field-label">PC Number</label><input type="text" id="pcInput" placeholder="e.g. PC-1042" value="'+state.pcNumber+'" />' +
-        '<label class="field-label">First Name</label><input type="text" id="firstInput" placeholder="e.g. John" value="'+state.firstName+'" />' +
-        '<label class="field-label">Last Name</label><input type="text" id="lastInput" placeholder="e.g. Smith" value="'+state.lastName+'" />' +
-        '<label class="field-label">Department / Location</label><input type="text" id="deptInput" placeholder="e.g. HR, 3rd Floor, Reception" value="'+state.department+'" style="margin-bottom:0"/>' +
-      '</div>' +
-      '<button class="btn btn-primary" id="nextBtn" disabled>Next →</button></div>';
-    const pc=document.getElementById('pcInput'), fn=document.getElementById('firstInput'), ln=document.getElementById('lastInput'), dp=document.getElementById('deptInput'), nb=document.getElementById('nextBtn');
-    const check = () => { nb.disabled = !(pc.value.trim()&&fn.value.trim()&&ln.value.trim()&&dp.value.trim()); };
-    [pc,fn,ln,dp].forEach(el => el.addEventListener('input', check));
+        '<label class="field-label">PC Number</label><input type="text" id="pcIn" placeholder="e.g. PC-1042" value="' + state.pcNumber + '" />' +
+        '<label class="field-label">First Name</label><input type="text" id="fnIn" placeholder="e.g. John" value="' + state.firstName + '" />' +
+        '<label class="field-label">Last Name</label><input type="text" id="lnIn" placeholder="e.g. Smith" value="' + state.lastName + '" />' +
+        '<label class="field-label">Department / Location</label><input type="text" id="dpIn" placeholder="e.g. HR, 3rd Floor" value="' + state.department + '" style="margin-bottom:0"/>' +
+      '</div><button class="btn btn-primary" id="nextBtn" disabled>Next →</button></div>';
+    var pc=document.getElementById('pcIn'), fn=document.getElementById('fnIn'), ln=document.getElementById('lnIn'), dp=document.getElementById('dpIn'), nb=document.getElementById('nextBtn');
+    var check = function(){ nb.disabled = !(pc.value.trim()&&fn.value.trim()&&ln.value.trim()&&dp.value.trim()); };
+    [pc,fn,ln,dp].forEach(function(el){ el.addEventListener('input',check); });
     check();
-    nb.onclick = () => {
+    nb.onclick = function(){
       state.pcNumber=pc.value.trim(); state.firstName=fn.value.trim();
       state.lastName=ln.value.trim(); state.department=dp.value.trim();
-      try { localStorage.setItem('pcg_user_info', JSON.stringify({ pcNumber:state.pcNumber, firstName:state.firstName, lastName:state.lastName, department:state.department })); } catch(e) {}
-      state.step='need'; render();
+      saveUserInfo(); state.step='need'; render();
     };
     return;
   }
 
   // ── Need ──
   if (state.step === 'need') {
-    app.innerHTML = topbar('What do you need?') + progressBar('need') +
+    app.innerHTML = topbar('What do you need?') + progressBar(['info','need'],'need') +
       '<div class="content"><button class="btn-back" id="backBtn">← Back</button>' +
-      '<div class="card"><div class="card-label">What do you need?</div>' +
-        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">Select what you need. Ink requests require 2 printer photos so IT knows exactly what to order.</p>' +
-        '<div class="need-options">' +
-          '<div class="need-btn ink" id="inkBtn"><span class="need-btn-icon">🖨️</span><span class="need-btn-label">Ink / Toner</span><span class="need-btn-sub">Take printer photos</span></div>' +
-          '<div class="need-btn paper" id="paperBtn"><span class="need-btn-icon">📄</span><span class="need-btn-label">Paper</span><span class="need-btn-sub">Send request now</span></div>' +
-        '</div>' +
-      '</div></div>';
-    document.getElementById('backBtn').onclick  = () => { state.step='info'; render(); };
-    document.getElementById('inkBtn').onclick   = () => { state.need='ink';   state.step='details'; render(); };
-    document.getElementById('paperBtn').onclick = () => { state.need='paper'; state.step='details'; render(); };
+      '<div class="card"><div class="card-label">Select your request</div>' +
+        '<div class="request-grid">' +
+          '<div class="req-btn ink"   id="inkBtn" ><span class="req-btn-icon">🖨️</span><span class="req-btn-label">Ink / Toner</span><span class="req-btn-sub">Scan printer photos</span></div>' +
+          '<div class="req-btn paper" id="papBtn" ><span class="req-btn-icon">📄</span><span class="req-btn-label">Paper</span><span class="req-btn-sub">Restock request</span></div>' +
+          '<div class="req-btn newpr" id="newBtn" ><span class="req-btn-icon">🆕</span><span class="req-btn-label">New Printer</span><span class="req-btn-sub">Request a new printer</span></div>' +
+          '<div class="req-btn cable" id="cblBtn" ><span class="req-btn-icon">🔌</span><span class="req-btn-label">Printer Cable</span><span class="req-btn-sub">Need a cable?</span></div>' +
+        '</div></div></div>';
+    document.getElementById('backBtn').onclick = function(){ state.step='info'; render(); };
+    document.getElementById('inkBtn').onclick  = function(){ state.need='ink';        state.step='urg_ink'; render(); };
+    document.getElementById('papBtn').onclick  = function(){ state.need='paper';      state.step='urg_simple'; render(); };
+    document.getElementById('newBtn').onclick  = function(){ state.need='newprinter'; state.step='newprinter'; render(); };
+    document.getElementById('cblBtn').onclick  = function(){ state.need='cable';      state.step='cable'; render(); };
     return;
   }
 
-  // ── Details (urgency + toner) ──
-  if (state.step === 'details') {
-    const isInk = state.need === 'ink';
-    const urgencyHTML =
-      '<div class="card"><div class="card-label">⚡ Priority</div>' +
-        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:12px;">How urgent is this request?</p>' +
-        '<div class="urgency-row">' +
-          '<div class="urgency-btn '+(state.urgency==='normal'?'selected-normal':'')+'" id="normalBtn"><span class="urgency-icon">🟢</span><span class="urgency-label">Normal</span><span class="urgency-sub">Order when possible</span></div>' +
-          '<div class="urgency-btn '+(state.urgency==='urgent'?'selected-urgent':'')+'" id="urgentBtn"><span class="urgency-icon">🔴</span><span class="urgency-label">Urgent</span><span class="urgency-sub">Need it ASAP</span></div>' +
-        '</div>' +
-      '</div>';
-    const tonerHTML = isInk ?
-      '<div class="card"><div class="card-label">🖨️ Current Toner / Ink Level</div>' +
-        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:12px;">How much ink or toner is left?</p>' +
-        '<div class="toner-options">' +
-          TONER_LEVELS.map(t => '<div class="toner-btn '+(state.tonerLevel===t.key?'selected':'')+'" id="toner-'+t.key+'"><span class="toner-icon">'+t.icon+'</span><span class="toner-label">'+t.label+'</span></div>').join('') +
-        '</div>' +
-      '</div>' : '';
-    const canProceed = state.urgency && (isInk ? state.tonerLevel : true);
-    app.innerHTML = topbar('Priority & details') + progressBar('details') +
+  // ── Urgency for ink ──
+  if (state.step === 'urg_ink') {
+    var steps = ['info','need','urg_ink','front','back','analyzing','results'];
+    app.innerHTML = topbar('Priority') + progressBar(steps,'urg_ink') +
       '<div class="content"><button class="btn-back" id="backBtn">← Back</button>' +
-      urgencyHTML + tonerHTML +
-      '<button class="btn btn-primary" id="nextBtn" '+(canProceed?'':'disabled')+'>'+(isInk?'Next — Take Photos →':'Send Paper Request →')+'</button></div>';
-    document.getElementById('backBtn').onclick = () => { state.step='need'; render(); };
-    document.getElementById('normalBtn').onclick = () => { state.urgency='normal'; render(); };
-    document.getElementById('urgentBtn').onclick = () => { state.urgency='urgent'; render(); };
-    TONER_LEVELS.forEach(t => {
-      const el = document.getElementById('toner-'+t.key);
-      if (el) el.onclick = () => { state.tonerLevel=t.key; render(); };
-    });
-    document.getElementById('nextBtn').onclick = () => { state.step = isInk ? 'front' : 'paper'; render(); };
+      urgencyCard() +
+      '<button class="btn btn-primary" id="nextBtn" ' + (state.urgency?'':'disabled') + '>Next — Take Photos →</button></div>';
+    document.getElementById('backBtn').onclick = function(){ state.step='need'; render(); };
+    document.getElementById('nextBtn').onclick = function(){ state.step='front'; render(); };
+    wireUrgency();
     return;
   }
 
-  // ── Paper confirmation ──
-  if (state.step === 'paper') {
-    const urgencyBadge = state.urgency==='urgent' ? '<span class="urgent-badge">🔴 URGENT</span>' : '<span class="normal-badge">🟢 Normal</span>';
-    app.innerHTML = topbar('Paper Request') +
+  // ── Urgency for simple requests ──
+  if (state.step === 'urg_simple') {
+    app.innerHTML = topbar('Priority') + progressBar(['info','need','urg_simple'],'urg_simple') +
       '<div class="content"><button class="btn-back" id="backBtn">← Back</button>' +
-      '<div class="card"><div style="text-align:center;padding:20px 0 10px"><div style="font-size:48px;margin-bottom:12px">📄</div>' +
-        '<p style="font-size:17px;font-weight:700;margin-bottom:6px;">Paper Request ' + urgencyBadge + '</p>' +
-        '<p style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-top:10px;">Submitting for <strong>'+state.firstName+' '+state.lastName+'</strong><br>'+state.department+' — PC: '+state.pcNumber+'</p>' +
-      '</div></div>' +
-      '<button class="btn btn-email" id="emailBtn">📧 Send Paper Request</button></div>';
-    document.getElementById('backBtn').onclick  = () => { state.step='details'; render(); };
-    document.getElementById('emailBtn').onclick = () => sendEmail();
+      urgencyCard() +
+      '<button class="btn btn-email" id="sendBtn" ' + (state.urgency?'':'disabled') + '>📧 Send Request</button></div>';
+    document.getElementById('backBtn').onclick = function(){ state.step='need'; render(); };
+    document.getElementById('sendBtn').onclick = function(){ sendEmail(); };
+    wireUrgency();
+    return;
+  }
+
+  // ── New Printer ──
+  if (state.step === 'newprinter') {
+    app.innerHTML = topbar('New Printer') + progressBar(['info','need','newprinter'],'newprinter') +
+      '<div class="content"><button class="btn-back" id="backBtn">← Back</button>' +
+      '<div class="card"><div class="card-label">🏪 Is it for the store?</div>' +
+        '<div class="yesno-row"><div class="yesno-btn ' + (state.forStore==='yes'?'yes':'') + '" id="stY">✅ Yes</div><div class="yesno-btn ' + (state.forStore==='no'?'no':'') + '" id="stN">❌ No</div></div>' +
+      '</div>' +
+      '<div class="card"><div class="card-label">📍 What location?</div>' +
+        '<input type="text" id="locIn" placeholder="e.g. Main Street, HQ, Warehouse" value="' + state.location + '" style="margin-bottom:0"/>' +
+      '</div>' +
+      '<div class="card"><div class="card-label">💻 Computer type?</div>' +
+        '<div class="os-row"><div class="os-btn ' + (state.os==='chromebook'?'selected':'') + '" id="osCr"><span class="os-icon">🌐</span><span class="os-label">Chromebook</span></div><div class="os-btn ' + (state.os==='windows'?'selected':'') + '" id="osWn"><span class="os-icon">🪟</span><span class="os-label">Windows</span></div></div>' +
+      '</div>' +
+      urgencyCard() +
+      '<button class="btn btn-email" id="sendBtn" disabled>📧 Send New Printer Request</button></div>';
+
+    var locIn = document.getElementById('locIn');
+    var sendBtn = document.getElementById('sendBtn');
+    var checkNP = function(){ sendBtn.disabled = !(state.forStore && locIn.value.trim() && state.os && state.urgency); };
+    locIn.addEventListener('input', function(){ state.location=locIn.value.trim(); checkNP(); });
+    document.getElementById('backBtn').onclick = function(){ state.step='need'; render(); };
+    document.getElementById('stY').onclick = function(){ state.forStore='yes'; document.getElementById('stY').className='yesno-btn yes'; document.getElementById('stN').className='yesno-btn'; checkNP(); };
+    document.getElementById('stN').onclick = function(){ state.forStore='no';  document.getElementById('stN').className='yesno-btn no';  document.getElementById('stY').className='yesno-btn'; checkNP(); };
+    document.getElementById('osCr').onclick= function(){ state.os='chromebook'; document.getElementById('osCr').className='os-btn selected'; document.getElementById('osWn').className='os-btn'; checkNP(); };
+    document.getElementById('osWn').onclick= function(){ state.os='windows';    document.getElementById('osWn').className='os-btn selected'; document.getElementById('osCr').className='os-btn'; checkNP(); };
+    wireUrgency(checkNP);
+    sendBtn.onclick = function(){ state.location=locIn.value.trim(); sendEmail(); };
+    return;
+  }
+
+  // ── Cable ──
+  if (state.step === 'cable') {
+    app.innerHTML = topbar('Printer Cable') + progressBar(['info','need','cable'],'cable') +
+      '<div class="content"><button class="btn-back" id="backBtn">← Back</button>' +
+      '<div class="card"><div class="card-label">🔌 Do you need a printer cable?</div>' +
+        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">Tap Yes and IT will arrange one for you.</p>' +
+        '<div class="yesno-row"><div class="yesno-btn ' + (state.cableNeeded==='yes'?'yes':'') + '" id="cblY">✅ Yes</div><div class="yesno-btn ' + (state.cableNeeded==='no'?'no':'') + '" id="cblN">❌ No</div></div>' +
+      '</div>' +
+      '<button class="btn btn-email" id="sendBtn" ' + (state.cableNeeded==='yes'?'':'disabled') + '>📧 Send Cable Request</button></div>';
+    document.getElementById('backBtn').onclick = function(){ state.step='need'; render(); };
+    document.getElementById('cblY').onclick = function(){ state.cableNeeded='yes'; render(); };
+    document.getElementById('cblN').onclick = function(){ state.cableNeeded='no';  render(); };
+    var sb = document.getElementById('sendBtn');
+    if (sb) sb.onclick = function(){ sendEmail(); };
     return;
   }
 
   // ── Front photo ──
   if (state.step === 'front') {
-    app.innerHTML = topbar('Step 5 — Front photo') + progressBar('front') +
+    var fsteps = ['info','need','urg_ink','front','back','analyzing','results'];
+    app.innerHTML = topbar('Front photo') + progressBar(fsteps,'front') +
       '<div class="content"><button class="btn-back" id="backBtn">← Back</button>' +
       '<div class="card"><div class="card-label">📸 Front of printer</div>' +
-        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">Make sure the <strong>brand name</strong>, <strong>model label</strong> and <strong>control panel</strong> are clearly in frame.</p>' +
-        photoUI('front', state.front) +
+        '<p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;line-height:1.5;">Aim the <strong>brand name</strong> and <strong>model label</strong> inside the box. Get close enough to read the text clearly.</p>' +
+        cameraBlock('front','Aim brand &amp; model label inside the box') +
       '</div>' +
-      '<button class="btn btn-primary" id="nextBtn" '+(state.front?'':'disabled')+'>Next — Top Photo →</button></div>';
-    document.getElementById('backBtn').onclick = () => { state.step='details'; render(); };
-    document.getElementById('nextBtn').onclick = () => { state.step='back'; render(); };
+      '<button class="btn btn-primary" id="nextBtn" ' + (state.front?'':'disabled') + '>Next — Top Photo →</button></div>';
+    document.getElementById('backBtn').onclick = function(){ stopCamera(); state.step='urg_ink'; render(); };
+    document.getElementById('nextBtn').onclick = function(){ stopCamera(); state.step='back'; render(); };
+    wireCameraBlock('front');
     return;
   }
 
   // ── Top photo ──
   if (state.step === 'back') {
-    app.innerHTML = topbar('Step 6 — Top photo') + progressBar('back') +
+    var bsteps = ['info','need','urg_ink','front','back','analyzing','results'];
+    app.innerHTML = topbar('Top photo') + progressBar(bsteps,'back') +
       '<div class="content"><button class="btn-back" id="backBtn">← Back</button>' +
-      (state.front?'<div class="saved-photo-row"><img class="saved-thumb" src="'+state.front.url+'" alt="front"><div class="saved-info"><div class="saved-title">✅ Front photo saved</div><button class="saved-retake" id="retakeFront">Retake front photo</button></div></div>':'') +
+      (state.front ? '<div class="saved-photo-row"><img class="saved-thumb" src="' + state.front.url + '" alt="front"><div class="saved-info"><div class="saved-title">✅ Front photo saved</div><button class="saved-retake" id="rfBtn">Retake front</button></div></div>' : '') +
       '<div class="card"><div class="card-label">📸 Top of printer</div>' +
-        '<p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.6;">Take a photo of the <strong>top</strong> of the printer — shows the model sticker and serial number label.</p>' +
-        photoUI('back', state.back) +
+        '<p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;line-height:1.5;">Aim the <strong>top label</strong> and <strong>serial number</strong> inside the box. This is usually a white sticker on top.</p>' +
+        cameraBlock('back','Aim the top label &amp; serial number inside the box') +
       '</div>' +
-      (state.error?'<div class="error-box">⚠️ '+state.error+'</div>':'') +
-      '<button class="btn btn-primary" id="analyseBtn" '+(state.back?'':'disabled')+'>🔍 Analyse Printer</button></div>';
-    document.getElementById('backBtn').onclick = () => { state.step='front'; render(); };
-    document.getElementById('analyseBtn').onclick = () => analyze();
-    const rf = document.getElementById('retakeFront'); if (rf) rf.onclick = () => { state.step='front'; render(); };
+      (state.error ? '<div class="error-box">⚠️ ' + state.error + '</div>' : '') +
+      '<button class="btn btn-primary" id="analyseBtn" ' + (state.back?'':'disabled') + '>🔍 Analyse Printer</button></div>';
+    document.getElementById('backBtn').onclick  = function(){ stopCamera(); state.step='front'; render(); };
+    document.getElementById('analyseBtn').onclick = function(){ stopCamera(); analyze(); };
+    var rf = document.getElementById('rfBtn');
+    if (rf) rf.onclick = function(){ stopCamera(); state.step='front'; render(); };
+    wireCameraBlock('back');
     return;
   }
 
   // ── Analysing ──
   if (state.step === 'analyzing') {
-    app.innerHTML = topbar('Analysing…') + progressBar('analyzing') +
+    app.innerHTML = topbar('Analysing…') +
       '<div class="content"><div class="card"><div class="analyzing-wrap">' +
-        '<div class="spinner"></div><div class="analyzing-title">Reading your printer…</div>' +
-        '<div class="analyzing-sub">AI is identifying your printer and looking up the exact ink cartridges. This takes 10–20 seconds.</div>' +
+        '<div class="spinner"></div>' +
+        '<div class="analyzing-title">Reading your printer…</div>' +
+        '<div class="analyzing-sub">AI is identifying the brand, model and serial number from your photos.<br><br>This takes 5–15 seconds.</div>' +
       '</div></div></div>';
     return;
   }
 
   // ── Results ──
   if (state.step === 'results' && state.details) {
-    const d = state.details;
-    const urgencyBadge = state.urgency==='urgent' ? '<span class="urgent-badge">🔴 URGENT</span>' : '<span class="normal-badge">🟢 Normal</span>';
-    const tonerInfo = state.tonerLevel ? TONER_LEVELS.find(t=>t.key===state.tonerLevel) : null;
-    app.innerHTML = topbar(d.brand + ' ' + d.model) + progressBar('results') +
+    var d = state.details;
+    var rsteps = ['info','need','urg_ink','front','back','analyzing','results'];
+    var urgBadge = state.urgency==='urgent' ? '<span class="urgent-badge">🔴 URGENT</span>' : '<span class="normal-badge">🟢 Normal</span>';
+    app.innerHTML = topbar(d.brand + ' ' + d.model) + progressBar(rsteps,'results') +
       '<div class="content">' +
       '<div class="thumb-row">' +
-        (state.front?'<div class="thumb-box"><img src="'+state.front.url+'" alt="front"><div class="thumb-label">FRONT</div></div>':'') +
-        (state.back ?'<div class="thumb-box"><img src="'+state.back.url +'" alt="top"  ><div class="thumb-label">TOP</div></div>':'') +
+        (state.front ? '<div class="thumb-box"><img src="' + state.front.url + '" alt="front"><div class="thumb-label">FRONT</div></div>' : '') +
+        (state.back  ? '<div class="thumb-box"><img src="' + state.back.url  + '" alt="top"  ><div class="thumb-label">TOP</div></div>'   : '') +
       '</div>' +
-      '<div class="card"><div class="card-label">📋 Request summary</div><div class="detail-grid">' +
-        '<div class="detail-cell full"><div class="dc-label">Submitted by</div><div class="dc-value">'+state.firstName+' '+state.lastName+' '+urgencyBadge+'</div></div>' +
-        '<div class="detail-cell"><div class="dc-label">Department</div><div class="dc-value">'+state.department+'</div></div>' +
-        '<div class="detail-cell"><div class="dc-label">PC Number</div><div class="dc-value">'+state.pcNumber+'</div></div>' +
-        (tonerInfo?'<div class="detail-cell"><div class="dc-label">Toner level</div><div class="dc-value">'+tonerInfo.icon+' '+tonerInfo.label+'</div></div>':'') +
+      '<div class="card"><div class="card-label">📋 Summary</div><div class="detail-grid">' +
+        '<div class="detail-cell full"><div class="dc-label">Submitted by</div><div class="dc-value">' + state.firstName + ' ' + state.lastName + ' ' + urgBadge + '</div></div>' +
+        '<div class="detail-cell"><div class="dc-label">Department</div><div class="dc-value">' + state.department + '</div></div>' +
+        '<div class="detail-cell"><div class="dc-label">PC Number</div><div class="dc-value">' + state.pcNumber + '</div></div>' +
       '</div></div>' +
       '<div class="card"><div class="card-label">🖨️ Printer details</div><div class="detail-grid">' +
-        '<div class="detail-cell"><div class="dc-label">Brand</div><div class="dc-value">'+d.brand+'</div></div>' +
-        '<div class="detail-cell"><div class="dc-label">Type</div><div class="dc-value">'+d.printer_type+'</div></div>' +
-        '<div class="detail-cell full"><div class="dc-label">Model</div><div class="dc-value">'+d.model+'</div></div>' +
-        '<div class="detail-cell"><div class="dc-label">Model no.</div><div class="dc-value">'+(d.model_number||'—')+'</div></div>' +
-        '<div class="detail-cell"><div class="dc-label">Serial no.</div><div class="dc-value">'+(d.serial_number||'Not found')+'</div></div>' +
-      '</div></div>' +
-      '<div class="card"><div class="card-label">🖨️ Ink / toner to order</div>' +
-        '<div class="dc-label" style="margin-bottom:6px;">Cartridge number</div><span class="ink-badge">'+d.ink_cartridge_numbers+'</span>'+(d.verified_from_db?' <span style="background:#e6f9ee;color:#1a7a40;border:1px solid #9fe3be;border-radius:20px;font-size:11px;font-weight:700;padding:3px 10px;">✓ Verified</span>':' <span style="background:#faeeda;color:#ba7517;border:1px solid #fac775;border-radius:20px;font-size:11px;font-weight:700;padding:3px 10px;">⚠️ Confirm before ordering</span>') +
-        '<div style="margin-top:14px;"><div class="dc-label" style="margin-bottom:4px;">Ink type</div><div class="dc-value">'+d.ink_type+'</div></div>' +
-        (d.ink_recommendation?'<div class="rec-box"><div class="rec-label">💡 AI Ordering Recommendation</div><div class="rec-text">'+d.ink_recommendation+'</div>'+(d.search_source?'<div style="font-size:11px;color:#1a3c8f;margin-top:6px;opacity:0.7;">Source: '+d.search_source+'</div>':'')+'</div>':'') +
+        '<div class="detail-cell"><div class="dc-label">Brand</div><div class="dc-value">' + d.brand + '</div></div>' +
+        '<div class="detail-cell"><div class="dc-label">Type</div><div class="dc-value">' + (d.printer_type||'—') + '</div></div>' +
+        '<div class="detail-cell full"><div class="dc-label">Model</div><div class="dc-value">' + d.model + '</div></div>' +
+        '<div class="detail-cell"><div class="dc-label">Model no.</div><div class="dc-value">' + (d.model_number||'—') + '</div></div>' +
+        '<div class="detail-cell"><div class="dc-label">Serial no.</div><div class="dc-value">' + (d.serial_number||'Not found') + '</div></div>' +
       '</div>' +
-      (d.condition_notes?'<div class="card"><div class="card-label">📋 Condition</div><p class="notes-text">'+d.condition_notes+'</p></div>':'') +
+      (d.condition_notes && d.condition_notes !== 'No issues visible' ? '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)"><div class="dc-label">Condition</div><div style="font-size:13px;color:var(--text-muted);margin-top:4px;">' + d.condition_notes + '</div></div>' : '') +
+      '</div>' +
       '<button class="btn btn-email" id="emailBtn">📧 Send Report + Photos</button>' +
       '<button class="btn btn-secondary" id="rescanBtn">Start new request</button></div>';
-    document.getElementById('emailBtn').onclick  = () => sendEmail();
-    document.getElementById('rescanBtn').onclick = () => { state={step:'welcome',pcNumber:'',firstName:'',lastName:'',department:'',need:'',urgency:'',tonerLevel:'',front:null,back:null,details:null,error:''}; render(); };
+    document.getElementById('emailBtn').onclick  = function(){ sendEmail(); };
+    document.getElementById('rescanBtn').onclick = function(){ resetState(); render(); };
     return;
   }
 
   // ── Confirmation ──
   if (state.step === 'confirm') {
-    const isInk = state.need === 'ink';
-    app.innerHTML = topbar('Request Sent') +
+    var icons  = { ink:'🖨️', paper:'📄', newprinter:'🆕', cable:'🔌' };
+    var labels = { ink:'Ink Request', paper:'Paper Request', newprinter:'New Printer Request', cable:'Cable Request' };
+    app.innerHTML = topbar('Sent!') +
       '<div class="content"><div class="card"><div class="confirm-hero">' +
         '<div class="confirm-icon">✅</div>' +
         '<div class="confirm-title">Request Sent!</div>' +
-        '<div class="confirm-sub">Your ' + (isInk?'ink':'paper') + ' request has been sent to IT.<br><br>' +
-        '<strong>'+state.firstName+' '+state.lastName+'</strong><br>' +
-        state.department + ' — PC: ' + state.pcNumber +
-        (state.urgency==='urgent'?'<br><br><strong style="color:var(--urgent)">🔴 Marked as URGENT</strong>':'') +
+        '<div class="confirm-sub">' +
+          (icons[state.need]||'📋') + ' <strong>' + (labels[state.need]||'Request') + '</strong> submitted.<br><br>' +
+          '<strong>' + state.firstName + ' ' + state.lastName + '</strong><br>' +
+          state.department + ' — PC: ' + state.pcNumber +
+          (state.urgency==='urgent' ? '<br><br><strong style="color:var(--urgent)">🔴 Marked as URGENT</strong>' : '') +
         '</div></div></div>' +
       '<button class="btn btn-primary" id="newBtn">Start New Request</button></div>';
-    document.getElementById('newBtn').onclick = () => { state={step:'welcome',pcNumber:'',firstName:'',lastName:'',department:'',need:'',urgency:'',tonerLevel:'',front:null,back:null,details:null,error:''}; render(); };
+    document.getElementById('newBtn').onclick = function(){ resetState(); render(); };
     return;
   }
 }
